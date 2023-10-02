@@ -7,9 +7,10 @@ void sort(int nums[], int start, int end);
 int main(void)
 {
     int nums[] = {8, 9, 4, 1, 0, 3, 7, 5, 2, 6};
-    sort(nums, 0, 10);
+    int length = 10;
+    sort(nums, 0, length - 1);
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < length; i++) {
         printf("%i", nums[i]);
     }
     printf("\n");
@@ -34,7 +35,7 @@ void merge(int nums[], int start, int mid, int end)
     int result[end - start + 1];
     int i = start, j = mid+1, k = 0;
 
-    while (i <= mid && j < end)
+    while (i <= mid && j <= end)
     {
         if (nums[i] < nums[j])
         {
@@ -53,10 +54,10 @@ void merge(int nums[], int start, int mid, int end)
     {
         result[k] = nums[i];
         i++;
-        j++;
+        k++;
     }
 
-    while (j < end)
+    while (j <= end)
     {
         result[k] = nums[j];
         j++;
