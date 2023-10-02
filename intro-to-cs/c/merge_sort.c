@@ -18,6 +18,9 @@ int main(void)
 
 void sort(int nums[], int start, int end)
 {
+    // if both start and end are same element
+    // only one element remains
+    // return the recursive function
     if (end - start == 0)
     {
         return;
