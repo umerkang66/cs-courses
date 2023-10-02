@@ -7,7 +7,7 @@ void sort(int nums[], int start, int end);
 int main(void)
 {
     int nums[] = {8, 9, 4, 1, 0, 3, 7, 5, 2, 6};
-    int length = 10;
+    int length = sizeof(nums) / sizeof(nums[0]);
     sort(nums, 0, length - 1);
 
     for (int i = 0; i < length; i++) {
@@ -36,7 +36,7 @@ void sort(int nums[], int start, int end)
 void merge(int nums[], int start, int mid, int end)
 {
     int result[end - start + 1];
-    int i = start, j = mid+1, k = 0;
+    int i = start, j = mid + 1, k = 0;
 
     while (i <= mid && j <= end)
     {
