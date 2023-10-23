@@ -14,4 +14,6 @@ int main(void)
     char *s = "HI!";
     printf("%p , %s\n", s, s);
     printf("%p , %p , %p , %p\n", &s[0], &s[1], &s[2], &s[3]);
+
+    printf("%c , %c , %c , %c\n", *s, *(s+1), *(s+2), *(s+3));
 }
