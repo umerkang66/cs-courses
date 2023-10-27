@@ -16,4 +16,8 @@ int main(void)
     printf("%p , %p , %p , %p\n", &s[0], &s[1], &s[2], &s[3]);
 
     printf("%c , %c , %c , %c\n", *s, *(s+1), *(s+2), *(s+3));
+
+    printf("%s , %s , %s\n", s, s+1, s+2);
 }
+
+// NOTE: How pointer arithmetic works, adding will move it to the next address in memory (based on the data type), means if the next number is integer, it will move 4 bytes, because integer takes 4 bytes, we don't have to explicitely add the pointer with 4
