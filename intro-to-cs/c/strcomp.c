@@ -17,7 +17,7 @@ int main(void)
     }
 
     // compare the characters at the first memory address of both strings
-    // this will return true, because two same characters will be at the same position in memory
+    // becuase char is a primitive, that's why
     if (*s == *t)
     {
         printf("Same\n");
