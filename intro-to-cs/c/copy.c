@@ -4,9 +4,16 @@
 #include <string.h>
 #include <stdlib.h>
 
+char *strcopy(char *s, char *malloc);
+
 int main(void)
 {
     char *s = get_string("s: ");
+    if (s == NULL)
+    {
+        return 1;
+    }
+
     // this copies the address, of first byte, but not copies the string
     char *t = s;
 
@@ -18,16 +25,17 @@ int main(void)
     printf("s: %s, t: %s\n", s, t);
 
     char *u = get_string("u: ");
-    // this copies the string
     // malloc: will get the chunk of memory from computer
     // here we need (string length + 1) bytes
-    char *v = malloc(strlen(u)+1);
+    char *mallocated = malloc(strlen(s) + 1);
 
-    // also add the null character
-    for (int i = 0; i < strlen(u) + 1; i++)
+    // malloc will return NULL, if memory is not available, NULL is a pointer (address) that points to the start of empty memory that is allocated by malloc
+    if (mallocated == NULL)
     {
-        v[i] = u[i];
+        return 1;
     }
+
+    char *v = strcopy(u, mallocated);
 
     if(strlen(v) > 0)
     {
@@ -35,4 +43,17 @@ int main(void)
     }
 
     printf("s: %s, t: %s\n", u, v);
+    free(mallocated);
+    return 0;
+}
+
+char *strcopy(char *s, char *malloc)
+{
+    // also add the null character
+    for (int i = 0, n = strlen(s); i < n+1; i++)
+    {
+        malloc[i] = s[i];
+    }
+
+    return malloc;
 }
