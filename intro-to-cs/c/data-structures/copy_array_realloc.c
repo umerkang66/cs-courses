@@ -13,28 +13,23 @@ int main(void)
     list[1] = 2;
     list[2] = 3;
 
-    int *temp = malloc(4 * sizeof(int));
+    // grow or shrink the previous memory
+    int *temp = realloc(list, 4 * sizeof(int));
     if (temp == NULL)
     {
         free(list);
         return 1;
     }
 
-    for (int i = 0; i < 3; i++)
-    {
-        // copying from old to new
-        temp[i] = list[i];
-    }
-    temp[3] = 4;
-
-    free(list);
-    list = temp;
+    list = temp;    
+    list[3] = 4;
 
     for (int i = 0; i < 4; i++)
     {
         printf("%i\n", list[i]);
     }
 
+    // both free(list) and free(temp), actually does the same thing
     free(list);
     return 0;
 }
