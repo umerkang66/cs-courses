@@ -14,6 +14,7 @@ int main(void)
     list[2] = 3;
 
     // grow or shrink the previous memory
+    // it automatically frees the previous memory
     int *temp = realloc(list, 4 * sizeof(int));
     if (temp == NULL)
     {
@@ -21,7 +22,7 @@ int main(void)
         return 1;
     }
 
-    list = temp;    
+    list = temp;
     list[3] = 4;
 
     for (int i = 0; i < 4; i++)
