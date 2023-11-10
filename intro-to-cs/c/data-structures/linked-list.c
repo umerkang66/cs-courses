@@ -22,6 +22,10 @@ int main(void)
     for (int i = 1; i <= 20; i++)
     {
         node *n = malloc(sizeof(node));
+        if (n == NULL)
+        {
+            return 1;
+        }
         n->number = i;
         n->next = list;
         list = n;
@@ -33,14 +37,16 @@ int main(void)
 void printList(node *list)
 {
     node *currentNode = list;
-    while (1)
+    while (currentNode != NULL)
     {
         if (currentNode->next == NULL)
         {
             printf("%i\n", currentNode->number);
-            break;
         }
-        printf("%i -> ", currentNode->number);
+        else
+        {
+            printf("%i -> ", currentNode->number);
+        }
         currentNode = currentNode->next;
     }
 }
