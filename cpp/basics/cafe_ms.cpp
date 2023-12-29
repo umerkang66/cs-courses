@@ -98,6 +98,6 @@ int main()
 	cout << "Net Total:       " << amountDue - discount << " Rs." << endl;
 
 	cout << endl;
-	cout << "Thank you for purchasing. Have a nice day.";
+	cout << "Thank you for purchasing. Have a nice day." << endl;
 	return 0;
 }
