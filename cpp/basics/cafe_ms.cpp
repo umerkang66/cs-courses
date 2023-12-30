@@ -80,7 +80,7 @@ int main()
 			{
 				spacedItem += " ";
 			}
-			cout << orderNo << "             " << spacedItem << userPurchasedItems[i] << "            " << prices[i] * userPurchasedItems[i] << " Rs." << endl;
+			cout << orderNo << "             " << spacedItem << userPurchasedItems[i] << "            " << userPurchasedItems[i] << " x " << prices[i] << " = " << prices[i] * userPurchasedItems[i] << " Rs." << endl;
 			orderNo++;
 		}
 	}
