@@ -5,8 +5,8 @@ using namespace std;
 
 int main()
 {
-    // opening files using constructor
-    string st;
+    // Writing text to a file
+    string st = "this is from constructor\nthis is from constructor\nthis is from constructor\nthis is from constructor\nthis is from constructor\n-- ";
     ofstream out("file.txt");
     out << st;
 
