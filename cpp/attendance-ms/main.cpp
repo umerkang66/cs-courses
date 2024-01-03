@@ -23,7 +23,7 @@ int main()
         cout << "Name of the class: ";
         cin >> class_name;
 
-        char students[total_students_length-1][char_length];
+        char students[total_students_length - 1][char_length];
 
         int counter = 0;
         char yesOrNo;
@@ -53,7 +53,7 @@ int main()
             }
             else
             {
-                answer += string(",") + students[i];    
+                answer += string(",") + students[i];
             }
         }
         output << answer;
@@ -80,8 +80,8 @@ int main()
 
         // now we know how many students there are
         // so make an array of that students
-        char retreived_students[how_many_students][char_length];
-        int retreived_students_counter = 0;
+        char retrieved_students[how_many_students][char_length];
+        int retrieved_students_counter = 0;
         int single_student_counter = 0;
 
         counter = 0;
@@ -90,14 +90,14 @@ int main()
         {
             if (curr_char == ',')
             {
-                retreived_students[retreived_students_counter][single_student_counter] = '\0';
+                retrieved_students[retrieved_students_counter][single_student_counter] = '\0';
 
-                retreived_students_counter++;
+                retrieved_students_counter++;
                 single_student_counter = 0;
             }
             else
             {
-                retreived_students[retreived_students_counter][single_student_counter] = curr_char;
+                retrieved_students[retrieved_students_counter][single_student_counter] = curr_char;
                 single_student_counter++;
             }
 
@@ -118,9 +118,9 @@ int main()
             isPresent[i] = -1;
         }
 
-        for (int i = 0; *retreived_students[i] != '\0'; i++)
+        for (int i = 0; i < how_many_students; i++)
         {
-            cout << retreived_students[i] << " (p/a)? ";
+            cout << retrieved_students[i] << " (p/a)? ";
             char answer;
             cin >> answer;
             if (answer == 'p')
@@ -138,14 +138,14 @@ int main()
         }
 
         // CONTROL TO STUDENT
-        for (int i = 0; *retreived_students[i] != '\0'; i++)
+        for (int i = 0; i < how_many_students; i++)
         {
             string message;
-            if (isPresent[i]==1)
+            if (isPresent[i] == 1)
             {
                 message = "PRESENT";
             }
-            else if (isPresent[i]==0)
+            else if (isPresent[i] == 0)
             {
                 message = "ABSENT";
             }
@@ -153,7 +153,7 @@ int main()
             {
                 message = "ATTENDANCE NOT MARKED";
             }
-            cout << retreived_students[i] << " is " << message << endl;
+            cout << retrieved_students[i] << " is " << message << endl;
         }
     }
 
