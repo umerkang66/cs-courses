@@ -7,7 +7,6 @@ int readFromDb();
 
 int main()
 {
-
     return 0;
 }
 
