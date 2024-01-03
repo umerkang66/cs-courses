@@ -66,7 +66,7 @@ int main()
         getline(input, raw_user_data);
         input.close();
 
-        int how_many_students = 0;
+        int how_many_students = 1;
         int counter = 0;
         char curr_char = raw_user_data[counter];
         while (curr_char != '\0')
@@ -90,6 +90,8 @@ int main()
         {
             if (curr_char == ',')
             {
+                retreived_students[retreived_students_counter][single_student_counter] = '\0';
+
                 retreived_students_counter++;
                 single_student_counter = 0;
             }
