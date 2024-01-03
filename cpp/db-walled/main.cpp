@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int writeToDb();
+int readFromDb();
 
 int main()
 {
