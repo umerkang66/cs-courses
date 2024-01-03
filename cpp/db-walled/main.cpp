@@ -34,14 +34,10 @@ int main()
     cout << "Here are the names of students" << endl;
     cout << "If they are present enter 'p', otherwise 'a'" << endl;
 
-    for (int i = 0; i < total_students_length; i++)
+  
+    for (int i = 0; *students[i] != '\0'; i++)
     {
-        for (int j = 0; students[i][j] != '\0'; j++)
-        {
-            // Process or print the valid data
-            printf("%c", students[i][j]);
-        }
-        printf("\n"); // Move to the next line after each row
+        cout << students[i] << endl;
     }
 
     return 0;
