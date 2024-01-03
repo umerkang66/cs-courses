@@ -81,8 +81,8 @@ int main()
         // now we know how many students there are
         // so make an array of that students
         char retrieved_students[how_many_students][char_length];
-        int retrieved_students_counter = 0;
-        int single_student_counter = 0;
+        int row_counter = 0;
+        int column_counter = 0;
 
         counter = 0;
         curr_char = raw_user_data[counter];
@@ -90,15 +90,15 @@ int main()
         {
             if (curr_char == ',')
             {
-                retrieved_students[retrieved_students_counter][single_student_counter] = '\0';
-
-                retrieved_students_counter++;
-                single_student_counter = 0;
+                // going to the next string (row) in array
+                row_counter++;
+                column_counter = 0;
             }
             else
             {
-                retrieved_students[retrieved_students_counter][single_student_counter] = curr_char;
-                single_student_counter++;
+                // going to the next index (column) in same string (row)
+                retrieved_students[row_counter][column_counter] = curr_char;
+                column_counter++;
             }
 
             curr_char = raw_user_data[++counter];
