@@ -66,7 +66,7 @@ int main()
         getline(input, raw_user_data);
         input.close();
 
-        int how_many_students = 1;
+        int how_many_students = 0;
         int counter = 0;
         char curr_char = raw_user_data[counter];
         while (curr_char != '\0')
