@@ -15,6 +15,8 @@ public:
     }
 };
 
+// class Student : public Person
+// default: class Student: private Person
 class Student : Person
 {
     string subject;
