@@ -47,14 +47,7 @@ int main()
         string answer = "";
         for (int i = 0; *students[i] != '\0'; i++)
         {
-            if (i == 0)
-            {
-                answer += students[i];
-            }
-            else
-            {
-                answer += string(",") + students[i];
-            }
+            answer += (students[i] + string(","));
         }
         output << answer;
         output.close();
@@ -66,7 +59,7 @@ int main()
         getline(input, raw_user_data);
         input.close();
 
-        int how_many_students = 1;
+        int how_many_students = 0;
         int counter = 0;
         char curr_char = raw_user_data[counter];
         while (curr_char != '\0')
@@ -90,6 +83,9 @@ int main()
         {
             if (curr_char == ',')
             {
+                // we also have to add the '\0' at the last column of previous row
+                retrieved_students[row_counter][column_counter] = '\0';
+
                 // going to the next string (row) in array
                 row_counter++;
                 column_counter = 0;
@@ -136,6 +132,7 @@ int main()
                 isPresent[i] = -1;
             }
         }
+        cout << endl;
 
         // CONTROL TO STUDENT
         for (int i = 0; i < how_many_students; i++)
