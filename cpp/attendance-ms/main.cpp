@@ -57,36 +57,29 @@ int main()
         ifstream input("data.txt");
         char raw_user_data[200];
         // backslash 0 means where to stop adding data into raw_user_data from input stream
-        input.getline(raw_user_data, 200, '\0');
+        // if we add backslash 0, it will also add the next line
+        input.getline(raw_user_data, 200);
         input.close();
 
-        cout << endl;
-        cout << raw_user_data << endl;
-        cout << endl;
-
         int how_many_students = 0;
-        int counter = 0;
-        char curr_char = raw_user_data[counter];
-        while (curr_char != '\0')
+        for (int i = 0; raw_user_data[i] != '\0'; i++)
         {
-            if (curr_char == ',')
+            if (raw_user_data[i] == ',')
             {
                 how_many_students++;
             }
-            curr_char = raw_user_data[++counter];
         }
 
         // now we know how many students there are
         // so make an array of that students
+        // +1 for the NULL CHAR
         char retrieved_students[how_many_students][char_length];
         int row_counter = 0;
         int column_counter = 0;
 
-        counter = 0;
-        curr_char = raw_user_data[counter];
-        while (curr_char != '\0')
+        for (int i = 0; raw_user_data[i] != '\0'; i++)
         {
-            if (curr_char == ',')
+            if (raw_user_data[i] == ',')
             {
                 // we also have to add the '\0' at the last column of previous row
                 retrieved_students[row_counter][column_counter] = '\0';
@@ -98,12 +91,11 @@ int main()
             else
             {
                 // going to the next index (column) in same string (row)
-                retrieved_students[row_counter][column_counter] = curr_char;
+                retrieved_students[row_counter][column_counter] = raw_user_data[i];
                 column_counter++;
             }
-
-            curr_char = raw_user_data[++counter];
         }
+        // at the very LAST row and very FIRST column, add the NULL CHAR
         retrieved_students[row_counter][column_counter] = '\0';
 
         // we have populated the array
