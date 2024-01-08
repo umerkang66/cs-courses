@@ -99,6 +99,7 @@ int main()
 
             curr_char = raw_user_data[++counter];
         }
+        retrieved_students[row_counter][column_counter] = '\0';
 
         // we have populated the array
         // CONTROL TO TEACHER
@@ -114,7 +115,7 @@ int main()
             isPresent[i] = -1;
         }
 
-        for (int i = 0; i < how_many_students; i++)
+        for (int i = 0; retrieved_students[i][0] != '\0'; i++)
         {
             cout << retrieved_students[i] << " (p/a)? ";
             char answer;
@@ -135,7 +136,7 @@ int main()
         cout << endl;
 
         // CONTROL TO STUDENT
-        for (int i = 0; i < how_many_students; i++)
+        for (int i = 0; retrieved_students[i][0] != '\0'; i++)
         {
             string message;
             if (isPresent[i] == 1)
