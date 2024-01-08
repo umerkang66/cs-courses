@@ -55,9 +55,14 @@ int main()
     else
     {
         ifstream input("data.txt");
-        string raw_user_data;
-        getline(input, raw_user_data);
+        char raw_user_data[200];
+        // backslash 0 means where to stop adding data into raw_user_data from input stream
+        input.getline(raw_user_data, 200, '\0');
         input.close();
+
+        cout << endl;
+        cout << raw_user_data << endl;
+        cout << endl;
 
         int how_many_students = 0;
         int counter = 0;
