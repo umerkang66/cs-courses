@@ -3,25 +3,16 @@
 
 using namespace std;
 
-void create_schema(string name, int length, string values[])
+struct user
 {
-    string content = name + "\n";
-    for (int i = 0; i < length; i++)
-    {
-        content += (values[i] + ",");
-    }
-    content += "\n";
-    ofstream file("data.csv");
-    file << content;
-    file.close();
-}
+    char name[40];
+    char number[11];
+    int balance;
+};
 
 int main()
 {
-    string name = "users";
-    int length = 3;
-    string values[length] = {"name", "phone_number", "balance"};
+    cout << "SignIn or SignUp" << endl;
 
-    create_schema(name, length, values);
     return 0;
 }
