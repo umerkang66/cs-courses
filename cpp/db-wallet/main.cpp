@@ -72,10 +72,7 @@ void save_user(User user)
     while (getline(input, current_line) && current_line != terminator)
     {
         complete_table += current_line;
-        if (current_line != terminator)
-        {
-            complete_table += '\n';
-        }
+        complete_table += '\n';
     }
 
     cout << complete_table << endl;
