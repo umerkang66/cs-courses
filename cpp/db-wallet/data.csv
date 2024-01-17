@@ -1,2 +1,3 @@
 users
-name,phone_number,balance,
+name,password,phone_number,balance
+---
