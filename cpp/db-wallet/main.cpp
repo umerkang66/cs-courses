@@ -18,7 +18,8 @@ struct Transaction
     int amount;
 };
 
-const string terminator = "---";
+const string table_terminator = "---";
+const string database_terminator = "------";
 
 // APPLICATION FUNCTIONS
 void authenticate();
@@ -33,6 +34,7 @@ Transaction *get_transactions();
 string *split(string str, char separator);
 string get_all_tables();
 string get_table(string name);
+void save_table(string rows, string name);
 
 User current_user;
 
@@ -107,7 +109,7 @@ User *add_user_all_users(User user)
     User *users = get_users();
     // finding the length
     int length = 0;
-    for (int i = 0; users[i].name != terminator; i++)
+    for (int i = 0; users[i].name != table_terminator; i++)
     {
         length++;
     }
@@ -116,7 +118,7 @@ User *add_user_all_users(User user)
     // and +1 is for the new terminator string
     User *new_users = new User[length + 2];
     int i;
-    for (i = 0; users[i].name != terminator; i++)
+    for (i = 0; users[i].name != table_terminator; i++)
     {
         new_users[i].name = users[i].name;
         new_users[i].password = users[i].password;
@@ -129,7 +131,7 @@ User *add_user_all_users(User user)
     new_users[i].number = user.number;
     new_users[i].balance = user.balance;
 
-    new_users[++i].name = terminator;
+    new_users[++i].name = table_terminator;
 
     // delete the old heap array
     delete[] users;
@@ -141,13 +143,28 @@ void save_all_users(User *users)
 {
     // first we have create all the rows
     string rows = "users\nname,password,phone_number,balance";
-    for (int i = 0; users[i].name != terminator; i++)
+    for (int i = 0; users[i].name != table_terminator; i++)
     {
         string row = users[i].name + ',' + users[i].password + ',' + users[i].number + ',' + to_string(users[i].balance);
         rows += '\n' + row;
     }
+    rows += '\n';
 
-    cout << rows << endl;
+    save_table(rows, "users");
+}
+
+void save_all_transactions(Transaction *transactions)
+{
+    // first we have create all the rows
+    string rows = "transactions\nfrom,to,amount";
+    for (int i = 0; transactions[i].from != table_terminator; i++)
+    {
+        string row = transactions[i].from + ',' + transactions[i].to + ',' + to_string(transactions[i].amount);
+        rows += '\n' + row;
+    }
+    rows += '\n';
+
+    save_table(rows, "transactions");
 }
 
 // this will return the heap array, make sure to DEALLOCATE it
@@ -179,7 +196,7 @@ User *get_users()
         fields = nullptr;
     }
 
-    users[users_counter].name = terminator;
+    users[users_counter].name = table_terminator;
 
     delete[] lines;
     lines = nullptr;
@@ -194,7 +211,7 @@ Transaction *get_transactions()
 
     int length = 0;
     string *lines = split(transaction_table, '\n');
-    for (int i = 2; i < lines[i][0] != '\0'; i++)
+    for (int i = 2; lines[i][0] != '\0'; i++)
     {
         length++;
     }
@@ -215,7 +232,7 @@ Transaction *get_transactions()
         fields = nullptr;
     }
 
-    transactions[transactions_counter].from = terminator;
+    transactions[transactions_counter].from = table_terminator;
 
     delete[] lines;
     lines = nullptr;
@@ -266,13 +283,12 @@ string *split(string str, char separator)
 string get_all_tables()
 {
     // getting the table
-    ifstream input("data.csv");
+    ifstream input("data.db");
 
-    string terminator = "------";
     string all_tables = "";
     string current_line;
 
-    while (getline(input, current_line) && current_line != terminator)
+    while (getline(input, current_line) && current_line != table_terminator)
     {
         all_tables += current_line;
         all_tables += '\n';
@@ -374,4 +390,123 @@ string get_table(string name)
         i++;
     }
     return table;
+}
+
+void save_table(string rows, string name)
+{
+    string database = get_all_tables();
+    string table_terminator = "---";
+
+    // to check if all the characters of name are in
+    // all_tables create an array
+    bool all_chars_of_name_in_all_tables[name.length()];
+    // initialize it with 0
+    for (int i = 0; i < name.length(); i++)
+    {
+        all_chars_of_name_in_all_tables[i] = 0;
+    }
+    int table_starting_index = -1;
+
+    for (int i = 0; i < database.length(); i++)
+    {
+        if (database.length() > name.length())
+        {
+            // there is a chance that that table will exist
+            for (int j = 0; j < name.length(); j++)
+            {
+                if (database[i + j] == name[j])
+                {
+                    all_chars_of_name_in_all_tables[j] = 1;
+                }
+            }
+
+            // check if the word is found
+            bool is_word_found = true;
+            for (int i = 0; i < name.length(); i++)
+            {
+                if (all_chars_of_name_in_all_tables[i] == 0)
+                {
+                    is_word_found = false;
+                }
+            }
+
+            // if all the characters are found
+            if (is_word_found)
+            {
+                // store the starting index
+                table_starting_index = i;
+                // and break the loop
+                break;
+            }
+            else
+            {
+                // reset the values
+                for (int i = 0; i < name.length(); i++)
+                {
+                    all_chars_of_name_in_all_tables[i] = 0;
+                }
+            }
+        }
+    }
+
+    if (table_starting_index == -1)
+    {
+        return;
+    }
+
+    // find the starting index (already found)
+    int start = table_starting_index;
+    // find the ending index (where is terminator '---')
+    int end = -1;
+    for (int i = 0; i < database.length(); i++)
+    {
+        bool chars_of_terminator_found[3] = {0, 0, 0};
+        for (int j = i + 1; j <= i + 3; j++)
+        {
+            if (database[j] == '-')
+            {
+                chars_of_terminator_found[j - i - 1] = 1;
+            }
+        }
+        bool is_found = true;
+        for (int i = 0; i < 3; i++)
+        {
+            if (chars_of_terminator_found[i] == 0)
+            {
+                is_found = false;
+            }
+        }
+        if (is_found)
+        {
+            end = i;
+            break;
+        }
+    }
+
+    // for new database we wants to remove the database content from start to end
+    // and add the new rows instead of this
+    string new_database = "";
+    for (int i = 0; i < start; i++)
+    {
+        // add everything from 0 index to start of removal content
+        new_database += database[i];
+    }
+    // now add the new rows
+    for (int i = 0; i < rows.length(); i++)
+    {
+        new_database += rows[i];
+    }
+    // now add the database after the end
+    for (int i = end + 1; i < database.length(); i++)
+    {
+        new_database += database[i];
+    }
+
+    // database terminator
+    new_database += database_terminator;
+    cout << new_database << endl;
+
+    // ofstream output("data.db");
+    // output << new_database;
+    // output.close();
 }
