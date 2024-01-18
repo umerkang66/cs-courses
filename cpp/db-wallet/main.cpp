@@ -37,21 +37,20 @@ string get_all_tables();
 string get_table(string name);
 void save_table(string rows, string name);
 
-User *current_user;
+User *current_user = nullptr;
 
 int main()
 {
     // This will prompt the user to signIn or signUp
     // and will set the current user
     int status = authenticate();
-    if (status == 0)
+    while (status != 0)
     {
-        // move forward with the application
+        status = authenticate();
     }
-    else
-    {
-        return 1;
-    }
+
+    // move forward with the application
+    return 0;
 }
 
 int authenticate()
@@ -89,6 +88,30 @@ int authenticate()
     return 0;
 }
 
+void signin_user()
+{
+    string number;
+    string password;
+    cout << "Enter your number: ";
+    getline(cin, number);
+    cout << "Enter your password: ";
+    getline(cin, password);
+
+    User *users = get_users();
+    for (int i = 0; users[i].name != table_terminator; i++)
+    {
+        if (users[i].number == number && users[i].password == password)
+        {
+            *current_user = users[i];
+            cout << "Congratulations You are Signed In" << endl;
+            delete[] users;
+            return;
+        }
+    }
+    delete[] users;
+    current_user = nullptr;
+}
+
 User create_user()
 {
     User user;
@@ -104,29 +127,6 @@ User create_user()
     user.balance = 0;
 
     return user;
-}
-
-void signin_user()
-{
-    string number;
-    string password;
-    cout << "Enter your number: ";
-    getline(cin, number);
-    cout << "Enter your password: ";
-    getline(cin, password);
-
-    User *users = get_users();
-    for (int i = 0; users[i].name != table_terminator; i++)
-    {
-        if (users[i].number == number && users[i].password == password)
-        {
-            cout << "Congratulations You are Signed In" << endl;
-            *current_user = users[i];
-            return;
-        }
-    }
-    delete[] users;
-    current_user = nullptr;
 }
 
 void signup_user()
