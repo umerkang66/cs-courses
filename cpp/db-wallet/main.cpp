@@ -22,9 +22,10 @@ const string table_terminator = "---";
 const string database_terminator = "------";
 
 // APPLICATION FUNCTIONS
-void authenticate();
+int authenticate();
 User create_user();
 void signup_user();
+void signin_user();
 User *get_users();
 User *add_user_all_users(User user);
 void save_all_users(User *users);
@@ -36,18 +37,24 @@ string get_all_tables();
 string get_table(string name);
 void save_table(string rows, string name);
 
-User current_user;
+User *current_user;
 
 int main()
 {
     // This will prompt the user to signIn or signUp
     // and will set the current user
-    authenticate();
-
-    return 0;
+    int status = authenticate();
+    if (status == 0)
+    {
+        // move forward with the application
+    }
+    else
+    {
+        return 1;
+    }
 }
 
-void authenticate()
+int authenticate()
 {
     cout << "Do you have the account? (y/n) ";
     char haveAccount;
@@ -64,12 +71,22 @@ void authenticate()
     if (haveAccount == 'y' || haveAccount == 'Y')
     {
         // USER WANTS TO SIGNIN
+        signin_user();
     }
     else
     {
         // USER WANTS TO SIGNUP
         signup_user();
     }
+
+    // AFTER SIGNING IN OR SIGNING UP, CURRENT_USER WILL BE SETUP
+    // IF CURRENTUSER IS NOT AVAILABLE, MEANS SOMETHING WENT WRONG
+    if (current_user == nullptr)
+    {
+        cout << "You are not authenticated" << endl;
+        return 1;
+    }
+    return 0;
 }
 
 User create_user()
@@ -89,6 +106,29 @@ User create_user()
     return user;
 }
 
+void signin_user()
+{
+    string number;
+    string password;
+    cout << "Enter your number: ";
+    getline(cin, number);
+    cout << "Enter your password: ";
+    getline(cin, password);
+
+    User *users = get_users();
+    for (int i = 0; users[i].name != table_terminator; i++)
+    {
+        if (users[i].number == number && users[i].password == password)
+        {
+            cout << "Congratulations You are Signed In" << endl;
+            *current_user = users[i];
+            return;
+        }
+    }
+    delete[] users;
+    current_user = nullptr;
+}
+
 void signup_user()
 {
     // create the user in memory
@@ -99,8 +139,9 @@ void signup_user()
     save_all_users(users);
     delete[] users;
 
+    cout << "Congratulations you are Signed Up" << endl;
     // set the current_user to this user
-    current_user = user;
+    *current_user = user;
 }
 
 User *add_user_all_users(User user)
