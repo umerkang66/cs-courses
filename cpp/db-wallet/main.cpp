@@ -18,6 +18,7 @@ void signup_user();
 void save_user_to_file(User user);
 // UTILITY FUNCTIONS
 string *split(string str, char separator);
+string get_all_tables();
 
 User current_user;
 
@@ -85,30 +86,22 @@ void signup_user()
 void save_user_to_file(User user)
 {
     // getting the table
-    ifstream input("data.csv");
-
+    string complete_table = get_all_tables();
+    cout << complete_table << endl;
     string terminator = "---";
-    string complete_table = "";
-    string current_line;
-
-    while (getline(input, current_line) && current_line != terminator)
-    {
-        complete_table += current_line;
-        complete_table += '\n';
-    }
-
-    input.close();
+    cout << complete_table << endl;
 
     // if user already exists update the user
     // else add the user at the end of table
     bool does_user_exists = false; // THIS IS TEMPORARY TRUE
     // first create array by new line separator
     string *lines = split(complete_table, '\n');
-    for (int i = 2; i < lines->size(); i++)
+    for (int i = 2; i < lines->size() - 2; i++)
     {
         // for every create an array by ',' separator
         string *fields = split(lines[i], ',');
 
+        // this field will be a number in database
         if (fields[2] == user.number)
         {
             does_user_exists = true;
@@ -176,4 +169,39 @@ string *split(string str, char separator)
     arr[arr_counter] = one_string;
 
     return arr;
+}
+
+string get_all_tables()
+{
+    // getting the table
+    ifstream input("data.csv");
+
+    string terminator = "------";
+    string all_tables = "";
+    string current_line;
+
+    while (getline(input, current_line) && current_line != terminator)
+    {
+        all_tables += current_line;
+        all_tables += '\n';
+    }
+
+    input.close();
+
+    return all_tables;
+}
+
+string get_table(string name)
+{
+    string all_tables = get_all_tables();
+    string table_terminator = "---";
+
+    string table = "";
+    for (int i = 0; i < all_tables.length(); i++)
+    {
+        if (all_tables.length() > name.length())
+        {
+            // there is a chance that that table will exist
+        }
+    }
 }

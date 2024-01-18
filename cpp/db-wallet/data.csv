@@ -2,3 +2,6 @@ users
 name,password,phone_number,balance
 Muhammad Umer,password,123,0
 ---
+transactions
+from,to,amount,time
+------
