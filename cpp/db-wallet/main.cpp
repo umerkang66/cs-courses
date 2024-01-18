@@ -27,7 +27,7 @@ User create_user();
 void signup_user();
 void signin_user();
 User *get_users();
-User *add_user_all_users(User user);
+User *add_user_to_all_users(User user);
 void save_all_users(User *users);
 Transaction *get_transactions();
 
@@ -37,7 +37,7 @@ string get_all_tables();
 string get_table(string name);
 void save_table(string rows, string name);
 
-User *current_user = nullptr;
+User *current_user = new User;
 
 int main()
 {
@@ -46,6 +46,7 @@ int main()
     int status = authenticate();
     while (status != 0)
     {
+        cout << endl;
         status = authenticate();
     }
 
@@ -80,7 +81,7 @@ int authenticate()
 
     // AFTER SIGNING IN OR SIGNING UP, CURRENT_USER WILL BE SETUP
     // IF CURRENTUSER IS NOT AVAILABLE, MEANS SOMETHING WENT WRONG
-    if (current_user == nullptr)
+    if (current_user->number.empty())
     {
         cout << "You are not authenticated" << endl;
         return 1;
@@ -109,7 +110,6 @@ void signin_user()
         }
     }
     delete[] users;
-    current_user = nullptr;
 }
 
 User create_user()
@@ -134,7 +134,7 @@ void signup_user()
     // create the user in memory
     User user = create_user();
     // save the user in the file
-    User *users = add_user_all_users(user);
+    User *users = add_user_to_all_users(user);
     // saving all the users
     save_all_users(users);
     delete[] users;
@@ -144,7 +144,7 @@ void signup_user()
     *current_user = user;
 }
 
-User *add_user_all_users(User user)
+User *add_user_to_all_users(User user)
 {
     // getting the users
     User *users = get_users();
