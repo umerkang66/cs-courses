@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <string>
 
 using namespace std;
 
@@ -12,13 +11,26 @@ struct User
     int balance;
 };
 
+// APPLICATION FUNCTIONS
+void authenticate();
 User create_user();
 void signup_user();
-void save_user(User user);
+void save_user_to_file(User user);
+// UTILITY FUNCTIONS
+string *split(string str, char separator);
 
-User *current_user = nullptr;
+User current_user;
 
 int main()
+{
+    // This will prompt the user to signIn or signUp
+    // and will set the current user
+    authenticate();
+
+    return 0;
+}
+
+void authenticate()
 {
     cout << "Do you have the account? (y/n) ";
     char haveAccount;
@@ -41,8 +53,6 @@ int main()
         // USER WANTS TO SIGNUP
         signup_user();
     }
-
-    return 0;
 }
 
 User create_user()
@@ -67,12 +77,12 @@ void signup_user()
     // create the user in memory
     User user = create_user();
     // save the user in the file
-    save_user(user);
+    save_user_to_file(user);
     // set the current_user to this user
-    *current_user = user;
+    current_user = user;
 }
 
-void save_user(User user)
+void save_user_to_file(User user)
 {
     // getting the table
     ifstream input("data.csv");
@@ -89,12 +99,44 @@ void save_user(User user)
 
     input.close();
 
-    string row = user.name + ',' + user.password + ',' + user.number + ',' + to_string(user.balance) + '\n' + "---";
+    // if user already exists update the user
+    // else add the user at the end of table
+    bool does_user_exists = false; // THIS IS TEMPORARY TRUE
+    // first create array by new line separator
+    string *lines = split(complete_table, '\n');
+    for (int i = 2; i < lines->size(); i++)
+    {
+        // for every create an array by ',' separator
+        string *fields = split(lines[i], ',');
 
-    complete_table += row;
+        if (fields[2] == user.number)
+        {
+            does_user_exists = true;
+        }
+
+        delete[] fields;
+        fields = nullptr;
+    }
+
+    delete[] lines;
+    lines = nullptr;
+
+    if (does_user_exists)
+    {
+        cout << "umer did this" << endl;
+    }
+    else
+    {
+        string row = user.name + ',' + user.password + ',' + user.number + ',' + to_string(user.balance) + '\n';
+
+        complete_table += row;
+    }
+
+    complete_table += terminator;
 
     // saving the row in the table
     ofstream output("data.csv");
+
     output << complete_table;
     output.close();
 }
@@ -114,7 +156,7 @@ string *split(string str, char separator)
 
     // make an array of that length in the HEAP memory
     // make sure the DEALLOCATE this memory after using it
-    string *arr = new string[arr_length];
+    string *arr = new string[arr_length + 1];
     int arr_counter = 0;
     string one_string = "";
     for (int i = 0; i < str.length(); i++)
@@ -122,9 +164,14 @@ string *split(string str, char separator)
         if (str[i] == separator)
         {
             arr[arr_counter] = one_string;
+            arr_counter++;
+            // reset the string
             one_string = "";
         }
-        one_string += str[i];
+        else
+        {
+            one_string += str[i];
+        }
     }
     arr[arr_counter] = one_string;
 
