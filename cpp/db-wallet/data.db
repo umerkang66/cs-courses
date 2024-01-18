@@ -1,11 +1,11 @@
-users
-name,password,phone_number,balance
-Muhammad Umer,password,123,0
-Gulzar Kang,password,456,0
----
 transactions
 from,to,amount
 123,456,60
 456,123,50
+---
+users
+name,password,phone_number,balance
+Muhammad Umer,password,123,0
+Gulzar Kang,password,456,0
 ---
 ------

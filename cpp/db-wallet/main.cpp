@@ -245,7 +245,7 @@ Transaction *get_transactions()
 string *split(string str, char separator)
 {
     int arr_length = 0;
-    for (int i = 0; i < str.length(); i++)
+    for (int i = 0; str[i] != '\0'; i++)
     {
         if (str[i] == separator)
         {
@@ -260,7 +260,7 @@ string *split(string str, char separator)
     string *arr = new string[arr_length + 2];
     int arr_counter = 0;
     string one_string = "";
-    for (int i = 0; i < str.length(); i++)
+    for (int i = 0; str[i] != '\0'; i++)
     {
         if (str[i] == separator)
         {
@@ -288,7 +288,7 @@ string get_all_tables()
     string all_tables = "";
     string current_line;
 
-    while (getline(input, current_line) && current_line != table_terminator)
+    while (getline(input, current_line) && current_line != database_terminator)
     {
         all_tables += current_line;
         all_tables += '\n';
@@ -299,59 +299,66 @@ string get_all_tables()
     return all_tables;
 }
 
+int str_len(string str)
+{
+    int length = 0;
+    for (int i = 0; str[i] != '\0'; i++)
+    {
+        length++;
+    }
+    return length;
+}
+
 string get_table(string name)
 {
     string all_tables = get_all_tables();
-    string table_terminator = "---";
 
     // to check if all the characters of name are in
     // all_tables create an array
-    bool all_chars_of_name_in_all_tables[name.length()];
+    int name_length = str_len(name);
+    bool all_chars_of_name_in_all_tables[name_length];
     // initialize it with 0
-    for (int i = 0; i < name.length(); i++)
+    for (int i = 0; i < name_length; i++)
     {
         all_chars_of_name_in_all_tables[i] = 0;
     }
     int table_starting_index = -1;
 
-    for (int i = 0; i < all_tables.length(); i++)
+    for (int i = 0; all_tables[i] != '\0'; i++)
     {
-        if (all_tables.length() > name.length())
+        // there is a chance that that table will exist
+        for (int j = 0; j < name_length; j++)
         {
-            // there is a chance that that table will exist
-            for (int j = 0; j < name.length(); j++)
+            if (all_tables[i + j] == name[j])
             {
-                if (all_tables[i + j] == name[j])
-                {
-                    all_chars_of_name_in_all_tables[j] = 1;
-                }
+                all_chars_of_name_in_all_tables[j] = 1;
             }
+        }
 
-            // check if the word is found
-            bool is_word_found = true;
-            for (int i = 0; i < name.length(); i++)
+        // check if the word is found
+        bool is_word_found = true;
+        for (int i = 0; i < name_length; i++)
+        {
+            if (all_chars_of_name_in_all_tables[i] == 0)
             {
-                if (all_chars_of_name_in_all_tables[i] == 0)
-                {
-                    is_word_found = false;
-                }
+                is_word_found = false;
             }
+        }
 
-            // if all the characters are found
-            if (is_word_found)
+        // if all the characters are found
+        if (is_word_found)
+        {
+            // store the starting index
+            table_starting_index = i;
+            // and break the loop
+            break;
+        }
+        else
+        {
+            // reset the values
+            for (int i = 0; i < name_length; i++)
             {
-                // store the starting index
-                table_starting_index = i;
-                // and break the loop
-                break;
-            }
-            else
-            {
-                // reset the values
-                for (int i = 0; i < name.length(); i++)
-                {
-                    all_chars_of_name_in_all_tables[i] = 0;
-                }
+                all_chars_of_name_in_all_tables[i] = 0;
             }
         }
     }
@@ -364,7 +371,7 @@ string get_table(string name)
     string table = "";
     int i = table_starting_index;
     // check for terminator
-    while (i < all_tables.length())
+    while (all_tables[i] != '\0')
     {
         table += all_tables[i];
         bool chars_of_terminator_found[3] = {0, 0, 0};
@@ -395,56 +402,53 @@ string get_table(string name)
 void save_table(string rows, string name)
 {
     string database = get_all_tables();
-    string table_terminator = "---";
 
     // to check if all the characters of name are in
     // all_tables create an array
-    bool all_chars_of_name_in_all_tables[name.length()];
+    int name_length = str_len(name);
+    bool all_chars_of_name_in_all_tables[name_length];
     // initialize it with 0
-    for (int i = 0; i < name.length(); i++)
+    for (int i = 0; i < name_length; i++)
     {
         all_chars_of_name_in_all_tables[i] = 0;
     }
     int table_starting_index = -1;
 
-    for (int i = 0; i < database.length(); i++)
+    for (int i = 0; database[i] != '\0'; i++)
     {
-        if (database.length() > name.length())
+        // there is a chance that that table will exist
+        for (int j = 0; j < name_length; j++)
         {
-            // there is a chance that that table will exist
-            for (int j = 0; j < name.length(); j++)
+            if (database[i + j] == name[j])
             {
-                if (database[i + j] == name[j])
-                {
-                    all_chars_of_name_in_all_tables[j] = 1;
-                }
+                all_chars_of_name_in_all_tables[j] = 1;
             }
+        }
 
-            // check if the word is found
-            bool is_word_found = true;
-            for (int i = 0; i < name.length(); i++)
+        // check if the word is found
+        bool is_word_found = true;
+        for (int i = 0; i < name_length; i++)
+        {
+            if (all_chars_of_name_in_all_tables[i] == 0)
             {
-                if (all_chars_of_name_in_all_tables[i] == 0)
-                {
-                    is_word_found = false;
-                }
+                is_word_found = false;
             }
+        }
 
-            // if all the characters are found
-            if (is_word_found)
+        // if all the characters are found
+        if (is_word_found)
+        {
+            // store the starting index
+            table_starting_index = i;
+            // and break the loop
+            break;
+        }
+        else
+        {
+            // reset the values
+            for (int i = 0; i < name_length; i++)
             {
-                // store the starting index
-                table_starting_index = i;
-                // and break the loop
-                break;
-            }
-            else
-            {
-                // reset the values
-                for (int i = 0; i < name.length(); i++)
-                {
-                    all_chars_of_name_in_all_tables[i] = 0;
-                }
+                all_chars_of_name_in_all_tables[i] = 0;
             }
         }
     }
@@ -458,14 +462,16 @@ void save_table(string rows, string name)
     int start = table_starting_index;
     // find the ending index (where is terminator '---')
     int end = -1;
-    for (int i = 0; i < database.length(); i++)
+    for (int i = table_starting_index; database[i] != '\0'; i++)
     {
         bool chars_of_terminator_found[3] = {0, 0, 0};
+        int chars_terminator_counter = 0;
         for (int j = i + 1; j <= i + 3; j++)
         {
             if (database[j] == '-')
             {
-                chars_of_terminator_found[j - i - 1] = 1;
+                chars_of_terminator_found[chars_terminator_counter] = 1;
+                chars_terminator_counter++;
             }
         }
         bool is_found = true;
@@ -492,12 +498,12 @@ void save_table(string rows, string name)
         new_database += database[i];
     }
     // now add the new rows
-    for (int i = 0; i < rows.length(); i++)
+    for (int i = 0; rows[i] != '\0'; i++)
     {
         new_database += rows[i];
     }
     // now add the database after the end
-    for (int i = end + 1; i < database.length(); i++)
+    for (int i = end + 1; database[i] != '\0'; i++)
     {
         new_database += database[i];
     }
