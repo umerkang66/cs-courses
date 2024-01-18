@@ -510,9 +510,8 @@ void save_table(string rows, string name)
 
     // database terminator
     new_database += database_terminator;
-    cout << new_database << endl;
 
-    // ofstream output("data.db");
-    // output << new_database;
-    // output.close();
+    ofstream output("data.db");
+    output << new_database;
+    output.close();
 }
