@@ -36,6 +36,8 @@ string *split(string str, char separator);
 string get_all_tables();
 string get_table(string name);
 void save_table(string rows, string name);
+int str_include_start(string str, string check);
+int str_include_end(int starting_index, string str, string check);
 
 User *current_user = new User;
 
@@ -146,7 +148,7 @@ void signup_user()
 
 User *add_user_to_all_users(User user)
 {
-    // getting the users
+    // getting the users from db
     User *users = get_users();
     // finding the length
     int length = 0;
@@ -337,6 +339,18 @@ string get_all_tables()
 
     input.close();
 
+    // if schema doesn't exist create the schema
+    // and write it to the db
+    int does_schemas_exists = str_include_start(all_tables, database_terminator);
+
+    if (does_schemas_exists == -1)
+    {
+        // there is no db file, first populate the db file with
+        // appropriate data and and return that data
+        // first reset the value
+        all_tables = "";
+    }
+
     return all_tables;
 }
 
@@ -350,37 +364,35 @@ int str_len(string str)
     return length;
 }
 
-string get_table(string name)
+int str_include_start(string str, string check)
 {
-    string all_tables = get_all_tables();
-
-    // to check if all the characters of name are in
-    // all_tables create an array
-    int name_length = str_len(name);
-    bool all_chars_of_name_in_all_tables[name_length];
+    // this will return -1, if it doesn't include
+    // the check string, otherwise it will return the index
+    int check_length = str_len(check);
+    bool all_chars_in_str[check_length];
     // initialize it with 0
-    for (int i = 0; i < name_length; i++)
+    for (int i = 0; i < check_length; i++)
     {
-        all_chars_of_name_in_all_tables[i] = 0;
+        all_chars_in_str[i] = 0;
     }
-    int table_starting_index = -1;
+    int check_starting_index = -1;
 
-    for (int i = 0; all_tables[i] != '\0'; i++)
+    for (int i = 0; str[i] != '\0'; i++)
     {
         // there is a chance that that table will exist
-        for (int j = 0; j < name_length; j++)
+        for (int j = 0; j < check_length; j++)
         {
-            if (all_tables[i + j] == name[j])
+            if (str[i + j] == check[j])
             {
-                all_chars_of_name_in_all_tables[j] = 1;
+                all_chars_in_str[j] = 1;
             }
         }
 
         // check if the word is found
         bool is_word_found = true;
-        for (int i = 0; i < name_length; i++)
+        for (int i = 0; i < check_length; i++)
         {
-            if (all_chars_of_name_in_all_tables[i] == 0)
+            if (all_chars_in_str[i] == 0)
             {
                 is_word_found = false;
             }
@@ -390,19 +402,66 @@ string get_table(string name)
         if (is_word_found)
         {
             // store the starting index
-            table_starting_index = i;
+            check_starting_index = i;
             // and break the loop
             break;
         }
         else
         {
             // reset the values
-            for (int i = 0; i < name_length; i++)
+            for (int i = 0; i < check_length; i++)
             {
-                all_chars_of_name_in_all_tables[i] = 0;
+                all_chars_in_str[i] = 0;
             }
         }
     }
+
+    return check_starting_index;
+}
+
+int str_include_end(int starting_index, string str, string check)
+{
+    int end = -1;
+    int check_length = str_len(check);
+
+    for (int i = starting_index; str[i] != '\0'; i++)
+    {
+        bool chars_of_check_found[check_length];
+        for (int i = 0; i < check_length; i++)
+        {
+            // initialize every value with 0 means not found
+            chars_of_check_found[i] = 0;
+        }
+        int chars_check_counter = 0;
+        for (int j = i; j < i + check_length; j++)
+        {
+            if (str[j] == check[j - i])
+            {
+                chars_of_check_found[chars_check_counter] = 1;
+                chars_check_counter++;
+            }
+        }
+        bool is_found = true;
+        for (int i = 0; i < check_length; i++)
+        {
+            if (chars_of_check_found[i] == 0)
+            {
+                is_found = false;
+            }
+        }
+        if (is_found)
+        {
+            end = i + check_length - 1;
+            break;
+        }
+    }
+    return end;
+}
+
+string get_table(string name)
+{
+    string all_tables = get_all_tables();
+    int table_starting_index = str_include_start(all_tables, name);
 
     if (table_starting_index == -1)
     {
@@ -443,56 +502,7 @@ string get_table(string name)
 void save_table(string rows, string name)
 {
     string database = get_all_tables();
-
-    // to check if all the characters of name are in
-    // all_tables create an array
-    int name_length = str_len(name);
-    bool all_chars_of_name_in_all_tables[name_length];
-    // initialize it with 0
-    for (int i = 0; i < name_length; i++)
-    {
-        all_chars_of_name_in_all_tables[i] = 0;
-    }
-    int table_starting_index = -1;
-
-    for (int i = 0; database[i] != '\0'; i++)
-    {
-        // there is a chance that that table will exist
-        for (int j = 0; j < name_length; j++)
-        {
-            if (database[i + j] == name[j])
-            {
-                all_chars_of_name_in_all_tables[j] = 1;
-            }
-        }
-
-        // check if the word is found
-        bool is_word_found = true;
-        for (int i = 0; i < name_length; i++)
-        {
-            if (all_chars_of_name_in_all_tables[i] == 0)
-            {
-                is_word_found = false;
-            }
-        }
-
-        // if all the characters are found
-        if (is_word_found)
-        {
-            // store the starting index
-            table_starting_index = i;
-            // and break the loop
-            break;
-        }
-        else
-        {
-            // reset the values
-            for (int i = 0; i < name_length; i++)
-            {
-                all_chars_of_name_in_all_tables[i] = 0;
-            }
-        }
-    }
+    int table_starting_index = str_include_start(database, name);
 
     if (table_starting_index == -1)
     {
@@ -501,34 +511,8 @@ void save_table(string rows, string name)
 
     // find the starting index (already found)
     int start = table_starting_index;
-    // find the ending index (where is terminator '---')
-    int end = -1;
-    for (int i = table_starting_index; database[i] != '\0'; i++)
-    {
-        bool chars_of_terminator_found[3] = {0, 0, 0};
-        int chars_terminator_counter = 0;
-        for (int j = i + 1; j <= i + 3; j++)
-        {
-            if (database[j] == '-')
-            {
-                chars_of_terminator_found[chars_terminator_counter] = 1;
-                chars_terminator_counter++;
-            }
-        }
-        bool is_found = true;
-        for (int i = 0; i < 3; i++)
-        {
-            if (chars_of_terminator_found[i] == 0)
-            {
-                is_found = false;
-            }
-        }
-        if (is_found)
-        {
-            end = i;
-            break;
-        }
-    }
+    // find the ending index of table terminator (where is terminator '---' ends)
+    int end = str_include_end(start, database, table_terminator);
 
     // for new database we wants to remove the database content from start to end
     // and add the new rows instead of this
@@ -543,6 +527,9 @@ void save_table(string rows, string name)
     {
         new_database += rows[i];
     }
+    // after adding the rows also the table-terminator
+    // end + 1 is actually a '\n' character so we don't need to add it
+    new_database += table_terminator;
     // now add the database after the end
     for (int i = end + 1; database[i] != '\0'; i++)
     {
