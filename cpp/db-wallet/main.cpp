@@ -341,14 +341,18 @@ string get_all_tables()
 
     // if schema doesn't exist create the schema
     // and write it to the db
-    int does_schemas_exists = str_include_start(all_tables, database_terminator);
+    int does_schemas_exists = str_include_start(all_tables, table_terminator);
 
     if (does_schemas_exists == -1)
     {
         // there is no db file, first populate the db file with
         // appropriate data and and return that data
         // first reset the value
-        all_tables = "";
+        all_tables = "users\nusersname,password,phone_number,balance\n" + table_terminator + "\ntransactions\nfrom,to,amount\n" + table_terminator + "\n" + database_terminator;
+
+        ofstream output("data.db");
+        output << all_tables;
+        output.close();
     }
 
     return all_tables;
