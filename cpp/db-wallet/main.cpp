@@ -33,7 +33,11 @@ Transaction *get_transactions();
 void save_all_transactions(Transaction *transactions);
 void start_app();
 void render_user_information();
-int show_and_get_menu();
+int show_and_get_answer();
+void logout();
+void show_history();
+Transaction *get_transactions_of_user(string user_number);
+User get_user_by_number(string user_number);
 
 // UTILITY FUNCTIONS
 string *split(string str, char separator);
@@ -66,18 +70,116 @@ int main()
 void start_app()
 {
     render_user_information();
-    int menu = show_and_get_menu();
+    int answer = -1;
+    while (answer != 0)
+    {
+        answer = show_and_get_answer();
+        if (answer == 1)
+        {
+            // handle transfer amount
+        }
+        else if (answer == 2)
+        {
+            show_history();
+        }
+        else if (answer == 3)
+        {
+            render_user_information();
+        }
+    }
+
+    logout();
 }
 
-int show_and_get_menu()
+void show_history()
+{
+    cout << endl;
+    Transaction *transactions = get_transactions_of_user(current_user->number);
+
+    int length = 0;
+    for (int i = 0; transactions[i].from != table_terminator; i++)
+    {
+        length++;
+    }
+
+    string recipient_names[length];
+    string recipient_numbers[length];
+    string amounts[length];
+
+    for (int i = 0; transactions[i].from != table_terminator; i++)
+    {
+        User recipient = get_user_by_number(transactions[i].to);
+        int amount = transactions[i].amount;
+
+        recipient_names[i] = recipient.name;
+        recipient_numbers[i] = recipient.number;
+        amounts[i] = to_string(amount);
+    }
+
+    delete[] transactions;
+    transactions = nullptr;
+
+    int max_name_length = str_len(recipient_names[0]);
+    int max_number_length = str_len(recipient_numbers[0]);
+    int max_amount_length = str_len(amounts[0]);
+
+    for (int i = 1; i < length; i++)
+    {
+        int name_length = str_len(recipient_names[i]);
+        if (name_length > max_name_length)
+            max_name_length = name_length;
+    }
+    for (int i = 1; i < length; i++)
+    {
+        int number_length = str_len(recipient_numbers[i]);
+        if (number_length > max_number_length)
+            max_number_length = number_length;
+    }
+    for (int i = 1; i < length; i++)
+    {
+        int amount_length = str_len(amounts[i]);
+        if (amount_length > max_amount_length)
+            max_amount_length = amount_length;
+    }
+
+    int total_length = max_name_length + max_number_length + max_amount_length;
+
+    int row_length = length + 4;
+    for (int i = 0; i < row_length; i++)
+    {
+        for (int j = 1; j <= total_length; j++)
+        {
+            if (j % 2 != 0)
+                cout << "#";
+            else
+                cout << " ";
+        }
+        cout << endl;
+    }
+}
+
+void logout()
+{
+    cout << "You are logged out successfully" << endl;
+    exit(0);
+}
+
+int show_and_get_answer()
 {
     cout << endl;
     cout << "1: Transfer amounts" << endl;
     cout << "2: Show history" << endl;
-    cout << "3: Logout" << endl;
+    cout << "3: My account" << endl;
+    cout << "0: Exit" << endl;
     int n;
     cout << "Enter number: ";
     cin >> n;
+
+    while (n < 0 && n > 3)
+    {
+        cout << "Please enter between 1 and 3: ";
+        cin >> n;
+    }
     return n;
 }
 
@@ -311,6 +413,21 @@ User *get_users()
 }
 
 // this will return the heap array, make sure to DEALLOCATE it
+User get_user_by_number(string user_number)
+{
+    User *users = get_users();
+    User found_user;
+    for (int i = 0; users[i].name != table_terminator; i++)
+    {
+        if (users[i].number == user_number)
+        {
+            found_user = users[i];
+        }
+    }
+    return found_user;
+}
+
+// this will return the heap array, make sure to DEALLOCATE it
 Transaction *get_transactions()
 {
     string transaction_table = get_table("transactions");
@@ -344,6 +461,32 @@ Transaction *get_transactions()
     lines = nullptr;
 
     return transactions;
+}
+
+Transaction *get_transactions_of_user(string user_number)
+{
+    Transaction *transactions = get_transactions();
+    int length = 0;
+    for (int i = 0; transactions[i].from != table_terminator; i++)
+    {
+        length++;
+    }
+    // +1 for the table terminator
+    Transaction *user_transactions = new Transaction[length + 1];
+    int counter = 0;
+    for (int i = 0; transactions[i].from != table_terminator; i++)
+    {
+        if (transactions[i].from == user_number)
+        {
+            user_transactions[counter] = transactions[i];
+            counter++;
+        }
+    }
+    // add the table terminator in the from property
+    user_transactions[counter].from = table_terminator;
+    delete[] transactions;
+    transactions = nullptr;
+    return user_transactions;
 }
 
 // UTILITY FUNCTIONS

@@ -6,10 +6,12 @@ Muhammad Ali,pass,834783,0
 Majid Kang,password,38473,0
 umer,umer,123,0
 Muhammad Umer,pass,132343,0
+umer gulzar,password,12343,0
 ---
 transactions
 from,to,amount
 123,456,60
 456,123,50
+123,834783,40
 ---
 ------
