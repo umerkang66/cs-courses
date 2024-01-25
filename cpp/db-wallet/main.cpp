@@ -96,66 +96,8 @@ void show_history()
     cout << endl;
     Transaction *transactions = get_transactions_of_user(current_user->number);
 
-    int length = 0;
-    for (int i = 0; transactions[i].from != table_terminator; i++)
-    {
-        length++;
-    }
-
-    string recipient_names[length];
-    string recipient_numbers[length];
-    string amounts[length];
-
-    for (int i = 0; transactions[i].from != table_terminator; i++)
-    {
-        User recipient = get_user_by_number(transactions[i].to);
-        int amount = transactions[i].amount;
-
-        recipient_names[i] = recipient.name;
-        recipient_numbers[i] = recipient.number;
-        amounts[i] = to_string(amount);
-    }
-
     delete[] transactions;
     transactions = nullptr;
-
-    int max_name_length = str_len(recipient_names[0]);
-    int max_number_length = str_len(recipient_numbers[0]);
-    int max_amount_length = str_len(amounts[0]);
-
-    for (int i = 1; i < length; i++)
-    {
-        int name_length = str_len(recipient_names[i]);
-        if (name_length > max_name_length)
-            max_name_length = name_length;
-    }
-    for (int i = 1; i < length; i++)
-    {
-        int number_length = str_len(recipient_numbers[i]);
-        if (number_length > max_number_length)
-            max_number_length = number_length;
-    }
-    for (int i = 1; i < length; i++)
-    {
-        int amount_length = str_len(amounts[i]);
-        if (amount_length > max_amount_length)
-            max_amount_length = amount_length;
-    }
-
-    int total_length = max_name_length + max_number_length + max_amount_length;
-
-    int row_length = length + 4;
-    for (int i = 0; i < row_length; i++)
-    {
-        for (int j = 1; j <= total_length; j++)
-        {
-            if (j % 2 != 0)
-                cout << "#";
-            else
-                cout << " ";
-        }
-        cout << endl;
-    }
 }
 
 void logout()
