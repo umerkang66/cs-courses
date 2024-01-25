@@ -30,11 +30,16 @@ User *get_users();
 User *add_user_to_all_users(User user);
 void save_all_users(User *users);
 Transaction *get_transactions();
+void save_all_transactions(Transaction *transactions);
+void start_app();
+void render_user_information();
+int show_and_get_menu();
 
 // UTILITY FUNCTIONS
 string *split(string str, char separator);
 string get_all_tables();
 string get_table(string name);
+int str_len(string str);
 void save_table(string rows, string name);
 int str_include_start(string str, string check);
 int str_include_end(int starting_index, string str, string check);
@@ -53,7 +58,65 @@ int main()
     }
 
     // move forward with the application
+    start_app();
+
     return 0;
+}
+
+void start_app()
+{
+    render_user_information();
+    int menu = show_and_get_menu();
+}
+
+int show_and_get_menu()
+{
+    cout << endl;
+    cout << "1: Transfer amounts" << endl;
+    cout << "2: Show history" << endl;
+    cout << "3: Logout" << endl;
+    int n;
+    cout << "Enter number: ";
+    cin >> n;
+    return n;
+}
+
+void render_user_information()
+{
+    string introduction = current_user->name + "  Balance: " + to_string(current_user->balance) + " Rs.";
+    if (str_len(introduction) % 2 == 0)
+    {
+        introduction.replace(introduction.find('.'), 1, "");
+    }
+
+    cout << endl;
+    // generating a reasonably good looking pattern
+    int line_length = str_len(introduction) + 6;
+    for (int i = 1; i <= 5; i++)
+    {
+        string line = "";
+        // if i == 3 don't generate patterns
+        if (i == 3)
+        {
+            // render the user information here
+            line += "#  " + introduction + "  #";
+        }
+        else
+        {
+            for (int j = 1; j <= line_length; j++)
+            {
+                if ((i == 1 || i == 5 || j == 1 || j == line_length) && j % 2 != 0)
+                {
+                    line += "#";
+                }
+                else
+                {
+                    line += " ";
+                }
+            }
+        }
+        cout << line << endl;
+    }
 }
 
 int authenticate()
