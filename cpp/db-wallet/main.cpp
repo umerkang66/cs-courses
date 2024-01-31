@@ -40,6 +40,8 @@ void logout();
 void show_history();
 Transaction *get_transactions_of_user(string user_number);
 User get_user_by_number(string user_number);
+void transfer_amount();
+int get_user_index_by_number(string user_number);
 
 // UTILITY FUNCTIONS
 string *split(string str, char separator);
@@ -51,6 +53,8 @@ int str_include_start(string str, string check);
 int str_include_end(int starting_index, string str, string check);
 void show_as_table(string **matrix, int rows, int cols);
 void clear();
+string to_upper(string);
+string to_lower(string);
 
 // adding the default empty user
 User default_user = {"", "", logged_out_number, 0};
@@ -97,6 +101,7 @@ void start_app()
         if (answer == 1)
         {
             // handle transfer amount
+            transfer_amount();
         }
         else if (answer == 2)
         {
@@ -115,6 +120,87 @@ void start_app()
     }
 
     exit(0);
+}
+
+void transfer_amount()
+{
+    cout << endl;
+    cout << "Enter the number of receiver: ";
+    string n;
+    cin >> n;
+
+    User *users = get_users();
+    int receiver_index = get_user_index_by_number(n);
+    int sender_index = get_user_index_by_number(current_user.number);
+
+    while (receiver_index == -1)
+    {
+        cout << "This user does not exists" << endl;
+        cout << endl;
+        cout << "Enter the number of receiver: ";
+        cin >> n;
+        receiver_index = get_user_index_by_number(n);
+        
+    }
+
+    int amount;
+    cout << "Enter amount to transfer: ";
+    cin >> amount;
+    cout << endl;
+    cout << "Do you want to transfer Rs. " << amount << " to " << to_upper(users[receiver_index].name) << " (y/n): ";
+    char answer;
+    cin >> answer;
+
+    while (answer != 'y' && answer != 'Y' && answer != 'n' && answer != 'N')
+    {
+        cout << "Only (y/n) are permitted: ";
+        cin >> answer;
+    }
+
+    if (users[sender_index].balance >= amount)
+    {
+        // sender can send the data
+        users[receiver_index].balance += amount;
+        users[sender_index].balance -= amount;
+        // also update the current user
+        current_user = users[sender_index];
+
+        // also create a transaction
+        Transaction new_transaction;
+        new_transaction.from = users[sender_index].number;
+        new_transaction.to = users[receiver_index].number;
+        new_transaction.amount = amount;
+        Transaction *transactions = get_transactions();
+        int length = 0;
+        for (int i = 0; transactions[i].from != terminator; i++)
+        {
+            length++;
+        }
+        Transaction *new_transactions = new Transaction[length + 1];
+        for (int i = 0; transactions[i].from != terminator; i++)
+        {
+            new_transactions[i] = transactions[i];
+        }
+        new_transactions[length - 1] = new_transaction;
+        new_transactions[length].from = terminator;
+
+        // save in database
+        save_all_users(users);
+        save_all_transactions(new_transactions);
+
+        delete[] transactions;
+        delete[] new_transactions;
+
+        cout << endl;
+        cout << "Money is sent successfully ✔️" << endl;
+    }
+    else
+    {
+        cout << "You don't have enough balance 😢" << endl;
+    }
+
+    delete[] users;
+    users = nullptr;
 }
 
 void show_history()
@@ -448,7 +534,7 @@ User *get_users()
 User get_user_by_number(string user_number)
 {
     User *users = get_users();
-    User found_user;
+    User found_user = default_user;
     for (int i = 0; users[i].name != terminator; i++)
     {
         if (users[i].number == user_number)
@@ -457,6 +543,20 @@ User get_user_by_number(string user_number)
         }
     }
     return found_user;
+}
+
+int get_user_index_by_number(string user_number)
+{
+    User *users = get_users();
+    int index = -1;
+    for (int i = 0; users[i].name != terminator; i++)
+    {
+        if (users[i].number == user_number)
+        {
+            index = i;
+        }
+    }
+    return index;
 }
 
 // this will return the heap array, make sure to DEALLOCATE it
@@ -784,4 +884,38 @@ void save_table(string rows, string name)
     ofstream output("data.db");
     output << new_database;
     output.close();
+}
+
+string to_lower(string str)
+{
+    string answer = "";
+    for (int i = 0; str[i] != '\0'; i++)
+    {
+        if (str[i] >= 65 && str[i] <= 92)
+        {
+            answer += (char)str[i] + 32;
+        }
+        else
+        {
+            answer += str[i];
+        }
+    }
+    return answer;
+}
+
+string to_upper(string str)
+{
+    string answer = "";
+    for (int i = 0; str[i] != '\0'; i++)
+    {
+        if (str[i] >= 97 && str[i] <= 122)
+        {
+            answer += (char)str[i] - 32;
+        }
+        else
+        {
+            answer += str[i];
+        }
+    }
+    return answer;
 }
