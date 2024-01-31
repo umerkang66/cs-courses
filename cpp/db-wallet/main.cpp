@@ -47,7 +47,9 @@ int str_len(string str);
 void save_table(string rows, string name);
 int str_include_start(string str, string check);
 int str_include_end(int starting_index, string str, string check);
+void show_as_table(string **matrix, int rows, int cols);
 
+// adding the default empty user
 User *current_user = new User;
 
 int main()
@@ -96,8 +98,51 @@ void show_history()
     cout << endl;
     Transaction *transactions = get_transactions_of_user(current_user->number);
 
+    int length = 0;
+    for (int i = 0; transactions[i].from != table_terminator; i++)
+    {
+        length++;
+    }
+
+    // from to ammount
+    // because there are only three properties
+    int rows = length + 1;
+    int cols = 3;
+    string **matrix = new string*[length + 1];
+    for (int i = 0; i < length + 1; i++)
+    {
+        matrix[i] = new string[cols];
+    }
+
+    matrix[0][0] = "From";
+    matrix[0][1] = "To";
+    matrix[0][2] = "Amount";
+    for (int i = 0; transactions[i].from != table_terminator; i++)
+    {
+        Transaction t = transactions[i];
+        matrix[i+1][0] = t.from;
+        matrix[i+1][1] = t.to;
+        matrix[i+1][2] = t.amount;
+    }
+
+    // make a matrix then pass it to the show_as_table function
+    show_as_table(matrix, rows, cols);
+
+    // deallocating the memory
+    for (int i = 0; i < length + 1; ++i) 
+    {
+        delete[] matrix[i];
+    }
+    delete[] matrix;
+
+
     delete[] transactions;
     transactions = nullptr;
+}
+
+void show_as_table(string **matrix, int rows, int cols)
+{
+    
 }
 
 void logout()
