@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <iomanip> // for setw
 
 using namespace std;
 
@@ -18,8 +19,9 @@ struct Transaction
     int amount;
 };
 
-const string table_terminator = "---";
+const string terminator = "---";
 const string database_terminator = "------";
+string logged_out_number = "-1";
 
 // APPLICATION FUNCTIONS
 int authenticate();
@@ -48,9 +50,11 @@ void save_table(string rows, string name);
 int str_include_start(string str, string check);
 int str_include_end(int starting_index, string str, string check);
 void show_as_table(string **matrix, int rows, int cols);
+void clear();
 
 // adding the default empty user
-User *current_user = new User;
+User default_user = {"", "", logged_out_number, 0};
+User current_user = default_user;
 
 int main()
 {
@@ -63,10 +67,24 @@ int main()
         status = authenticate();
     }
 
+    clear();
+
     // move forward with the application
     start_app();
 
     return 0;
+}
+
+void clear()
+{
+    // if the operating system is windows
+// then run this
+#ifdef _WIN32
+    system("cls");
+#else
+    // if operating system is unix or linux, run this
+    system("clear");
+#endif
 }
 
 void start_app()
@@ -102,10 +120,10 @@ void start_app()
 void show_history()
 {
     cout << endl;
-    Transaction *transactions = get_transactions_of_user(current_user->number);
+    Transaction *transactions = get_transactions_of_user(current_user.number);
 
     int length = 0;
-    for (int i = 0; transactions[i].from != table_terminator; i++)
+    for (int i = 0; transactions[i].from != terminator; i++)
     {
         length++;
     }
@@ -123,7 +141,7 @@ void show_history()
     matrix[0][0] = "From";
     matrix[0][1] = "To";
     matrix[0][2] = "Amount";
-    for (int i = 0; transactions[i].from != table_terminator; i++)
+    for (int i = 0; transactions[i].from != terminator; i++)
     {
         Transaction t = transactions[i];
         matrix[i + 1][0] = t.from;
@@ -152,27 +170,26 @@ void show_as_table(string **matrix, int rows, int cols)
     for (int i = 0; i < cols; i++)
     {
         // because we need two empty spaces on both sides
-        max_col_lengths[i] = str_len(matrix[0][i]) + 4;
+        max_col_lengths[i] = str_len(matrix[0][i]) + 10;
     }
     // now check for all the columns
     for (int i = 0; i < cols; i++)
     {
         for (int j = 0; j < rows; j++)
         {
-            int new_length = str_len(matrix[j][i]) + 4;
+            int new_length = str_len(matrix[j][i]) + 10;
             if (new_length > max_col_lengths[i])
             {
                 max_col_lengths[i] = new_length;
             }
         }
     }
-
-    // now displaying the table
 }
 
 void logout()
 {
-    current_user = new User;
+    current_user = default_user;
+    clear();
     cout << "You are logged out successfully 😃" << endl;
     cout << endl;
     main();
@@ -200,7 +217,7 @@ int show_and_get_answer()
 
 void render_user_information()
 {
-    string introduction = current_user->name + "  Balance: " + to_string(current_user->balance) + " Rs.";
+    string introduction = current_user.name + "  Balance: " + to_string(current_user.balance) + " Rs.";
     if (str_len(introduction) % 2 == 0)
     {
         introduction.replace(introduction.find('.'), 1, "");
@@ -263,7 +280,7 @@ int authenticate()
 
     // AFTER SIGNING IN OR SIGNING UP, CURRENT_USER WILL BE SETUP
     // IF CURRENTUSER IS NOT AVAILABLE, MEANS SOMETHING WENT WRONG
-    if (current_user->number.empty())
+    if (current_user.number == logged_out_number)
     {
         cout << "You are not authenticated" << endl;
         return 1;
@@ -281,12 +298,11 @@ void signin_user()
     getline(cin, password);
 
     User *users = get_users();
-    for (int i = 0; users[i].name != table_terminator; i++)
+    for (int i = 0; users[i].name != terminator; i++)
     {
         if (users[i].number == number && users[i].password == password)
         {
-            delete current_user;
-            *current_user = users[i];
+            current_user = users[i];
             cout << "Congratulations You are Signed In" << endl;
             delete[] users;
             return;
@@ -324,8 +340,7 @@ void signup_user()
 
     cout << "Congratulations you are Signed Up" << endl;
     // set the current_user to this user
-    delete current_user;
-    *current_user = user;
+    current_user = user;
 }
 
 User *add_user_to_all_users(User user)
@@ -334,7 +349,7 @@ User *add_user_to_all_users(User user)
     User *users = get_users();
     // finding the length
     int length = 0;
-    for (int i = 0; users[i].name != table_terminator; i++)
+    for (int i = 0; users[i].name != terminator; i++)
     {
         length++;
     }
@@ -343,7 +358,7 @@ User *add_user_to_all_users(User user)
     // and +1 is for the new terminator string
     User *new_users = new User[length + 2];
     int i;
-    for (i = 0; users[i].name != table_terminator; i++)
+    for (i = 0; users[i].name != terminator; i++)
     {
         new_users[i].name = users[i].name;
         new_users[i].password = users[i].password;
@@ -356,7 +371,7 @@ User *add_user_to_all_users(User user)
     new_users[i].number = user.number;
     new_users[i].balance = user.balance;
 
-    new_users[++i].name = table_terminator;
+    new_users[++i].name = terminator;
 
     // delete the old heap array
     delete[] users;
@@ -368,7 +383,7 @@ void save_all_users(User *users)
 {
     // first we have create all the rows
     string rows = "users\nname,password,phone_number,balance";
-    for (int i = 0; users[i].name != table_terminator; i++)
+    for (int i = 0; users[i].name != terminator; i++)
     {
         string row = users[i].name + ',' + users[i].password + ',' + users[i].number + ',' + to_string(users[i].balance);
         rows += '\n' + row;
@@ -382,7 +397,7 @@ void save_all_transactions(Transaction *transactions)
 {
     // first we have create all the rows
     string rows = "transactions\nfrom,to,amount";
-    for (int i = 0; transactions[i].from != table_terminator; i++)
+    for (int i = 0; transactions[i].from != terminator; i++)
     {
         string row = transactions[i].from + ',' + transactions[i].to + ',' + to_string(transactions[i].amount);
         rows += '\n' + row;
@@ -421,7 +436,7 @@ User *get_users()
         fields = nullptr;
     }
 
-    users[users_counter].name = table_terminator;
+    users[users_counter].name = terminator;
 
     delete[] lines;
     lines = nullptr;
@@ -434,7 +449,7 @@ User get_user_by_number(string user_number)
 {
     User *users = get_users();
     User found_user;
-    for (int i = 0; users[i].name != table_terminator; i++)
+    for (int i = 0; users[i].name != terminator; i++)
     {
         if (users[i].number == user_number)
         {
@@ -472,7 +487,7 @@ Transaction *get_transactions()
         fields = nullptr;
     }
 
-    transactions[transactions_counter].from = table_terminator;
+    transactions[transactions_counter].from = terminator;
 
     delete[] lines;
     lines = nullptr;
@@ -484,14 +499,14 @@ Transaction *get_transactions_of_user(string user_number)
 {
     Transaction *transactions = get_transactions();
     int length = 0;
-    for (int i = 0; transactions[i].from != table_terminator; i++)
+    for (int i = 0; transactions[i].from != terminator; i++)
     {
         length++;
     }
     // +1 for the table terminator
     Transaction *user_transactions = new Transaction[length + 1];
     int counter = 0;
-    for (int i = 0; transactions[i].from != table_terminator; i++)
+    for (int i = 0; transactions[i].from != terminator; i++)
     {
         if (transactions[i].from == user_number)
         {
@@ -500,7 +515,7 @@ Transaction *get_transactions_of_user(string user_number)
         }
     }
     // add the table terminator in the from property
-    user_transactions[counter].from = table_terminator;
+    user_transactions[counter].from = terminator;
     delete[] transactions;
     transactions = nullptr;
     return user_transactions;
@@ -564,14 +579,14 @@ string get_all_tables()
 
     // if schema doesn't exist create the schema
     // and write it to the db
-    int does_schemas_exists = str_include_start(all_tables, table_terminator);
+    int does_schemas_exists = str_include_start(all_tables, terminator);
 
     if (does_schemas_exists == -1)
     {
         // there is no db file, first populate the db file with
         // appropriate data and and return that data
         // first reset the value
-        all_tables = "users\nname,password,phone_number,balance\n" + table_terminator + "\ntransactions\nfrom,to,amount\n" + table_terminator + "\n" + database_terminator;
+        all_tables = "users\nname,password,phone_number,balance\n" + terminator + "\ntransactions\nfrom,to,amount\n" + terminator + "\n" + database_terminator;
 
         ofstream output("data.db");
         output << all_tables;
@@ -739,7 +754,7 @@ void save_table(string rows, string name)
     // find the starting index (already found)
     int start = table_starting_index;
     // find the ending index of table terminator (where is terminator '---' ends)
-    int end = str_include_end(start, database, table_terminator);
+    int end = str_include_end(start, database, terminator);
 
     // for new database we wants to remove the database content from start to end
     // and add the new rows instead of this
@@ -756,7 +771,7 @@ void save_table(string rows, string name)
     }
     // after adding the rows also the table-terminator
     // end + 1 is actually a '\n' character so we don't need to add it
-    new_database += table_terminator;
+    new_database += terminator;
     // now add the database after the end
     for (int i = end + 1; database[i] != '\0'; i++)
     {
