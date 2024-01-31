@@ -140,7 +140,6 @@ void transfer_amount()
         cout << "Enter the number of receiver: ";
         cin >> n;
         receiver_index = get_user_index_by_number(n);
-        
     }
 
     int amount;
@@ -170,19 +169,26 @@ void transfer_amount()
         new_transaction.from = users[sender_index].number;
         new_transaction.to = users[receiver_index].number;
         new_transaction.amount = amount;
-        Transaction *transactions = get_transactions();
-        int length = 0;
-        for (int i = 0; transactions[i].from != terminator; i++)
+
+        // make new array and copy all the elements in the new array
+        // +1 is for the new transaction
+        // and +1 is for the new terminator string
+        Transaction *new_transactions = new Transaction[length + 2];
+        int i;
+        for (i = 0; transactions[i].name != terminator; i++)
         {
-            length++;
+            new_transactions[i].name = transactions[i].name;
+            new_transactions[i].password = transactions[i].password;
+            new_transactions[i].number = transactions[i].number;
+            new_transactions[i].balance = transactions[i].balance;
         }
-        Transaction *new_transactions = new Transaction[length + 1];
-        for (int i = 0; transactions[i].from != terminator; i++)
-        {
-            new_transactions[i] = transactions[i];
-        }
-        new_transactions[length - 1] = new_transaction;
-        new_transactions[length].from = terminator;
+        // adding the latest added transaction
+        new_transactions[i].name = transaction.name;
+        new_transactions[i].password = transaction.password;
+        new_transactions[i].number = transaction.number;
+        new_transactions[i].balance = transaction.balance;
+
+        new_transactions[++i].name = terminator;
 
         // save in database
         save_all_users(users);
