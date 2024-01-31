@@ -88,9 +88,15 @@ void start_app()
         {
             render_user_information();
         }
+        else if (answer == 4)
+        {
+            logout();
+            // return because logout will start the new application
+            return;
+        }
     }
 
-    logout();
+    exit(0);
 }
 
 void show_history()
@@ -108,7 +114,7 @@ void show_history()
     // because there are only three properties
     int rows = length + 1;
     int cols = 3;
-    string **matrix = new string*[length + 1];
+    string **matrix = new string *[length + 1];
     for (int i = 0; i < length + 1; i++)
     {
         matrix[i] = new string[cols];
@@ -120,21 +126,20 @@ void show_history()
     for (int i = 0; transactions[i].from != table_terminator; i++)
     {
         Transaction t = transactions[i];
-        matrix[i+1][0] = t.from;
-        matrix[i+1][1] = t.to;
-        matrix[i+1][2] = t.amount;
+        matrix[i + 1][0] = t.from;
+        matrix[i + 1][1] = t.to;
+        matrix[i + 1][2] = t.amount;
     }
 
     // make a matrix then pass it to the show_as_table function
     show_as_table(matrix, rows, cols);
 
     // deallocating the memory
-    for (int i = 0; i < length + 1; ++i) 
+    for (int i = 0; i < length + 1; ++i)
     {
         delete[] matrix[i];
     }
     delete[] matrix;
-
 
     delete[] transactions;
     transactions = nullptr;
@@ -142,29 +147,52 @@ void show_history()
 
 void show_as_table(string **matrix, int rows, int cols)
 {
-    
+    int max_col_lengths[cols];
+    // set the default value with the length of first row values
+    for (int i = 0; i < cols; i++)
+    {
+        // because we need two empty spaces on both sides
+        max_col_lengths[i] = str_len(matrix[0][i]) + 4;
+    }
+    // now check for all the columns
+    for (int i = 0; i < cols; i++)
+    {
+        for (int j = 0; j < rows; j++)
+        {
+            int new_length = str_len(matrix[j][i]) + 4;
+            if (new_length > max_col_lengths[i])
+            {
+                max_col_lengths[i] = new_length;
+            }
+        }
+    }
+
+    // now displaying the table
 }
 
 void logout()
 {
-    cout << "You are logged out successfully" << endl;
-    exit(0);
+    current_user = new User;
+    cout << "You are logged out successfully 😃" << endl;
+    cout << endl;
+    main();
 }
 
 int show_and_get_answer()
 {
     cout << endl;
-    cout << "1: Transfer amounts" << endl;
-    cout << "2: Show history" << endl;
-    cout << "3: My account" << endl;
-    cout << "0: Exit" << endl;
+    cout << "1: Transfer amounts 💵" << endl;
+    cout << "2: Show history 🕰️" << endl;
+    cout << "3: My account 📊" << endl;
+    cout << "4: Logout 🔓" << endl;
+    cout << "0: Exit 🚪" << endl;
     int n;
-    cout << "Enter number: ";
+    cout << "Enter number from above: ";
     cin >> n;
 
-    while (n < 0 && n > 3)
+    while (n < 0 && n > 4)
     {
-        cout << "Please enter between 1 and 3: ";
+        cout << "Please enter between 1 and 4: ";
         cin >> n;
     }
     return n;
@@ -257,6 +285,7 @@ void signin_user()
     {
         if (users[i].number == number && users[i].password == password)
         {
+            delete current_user;
             *current_user = users[i];
             cout << "Congratulations You are Signed In" << endl;
             delete[] users;
@@ -278,7 +307,7 @@ User create_user()
 
     cout << "Enter your password 8 characters are allowed: ";
     getline(cin, user.password);
-    user.balance = 0;
+    user.balance = 100;
 
     return user;
 }
@@ -295,6 +324,7 @@ void signup_user()
 
     cout << "Congratulations you are Signed Up" << endl;
     // set the current_user to this user
+    delete current_user;
     *current_user = user;
 }
 
