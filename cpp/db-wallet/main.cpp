@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <iomanip> // for setw
 
 using namespace std;
 
@@ -305,7 +304,7 @@ int show_and_get_answer()
     cout << "Enter number from above: ";
     cin >> n;
 
-    while (n < 0 && n > 4)
+    while (n < 0 || n > 4)
     {
         cout << "Please enter between 1 and 4: ";
         cin >> n;
