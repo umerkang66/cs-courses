@@ -164,31 +164,37 @@ void transfer_amount()
         // also update the current user
         current_user = users[sender_index];
 
+        // getting all the transactions
+        Transaction *transactions = get_transactions();
         // also create a transaction
         Transaction new_transaction;
         new_transaction.from = users[sender_index].number;
         new_transaction.to = users[receiver_index].number;
         new_transaction.amount = amount;
 
+        int length = 0;
+        for (int i = 0; transactions[i].from != terminator; i++)
+        {
+            length++;
+        }
+
         // make new array and copy all the elements in the new array
         // +1 is for the new transaction
         // and +1 is for the new terminator string
         Transaction *new_transactions = new Transaction[length + 2];
         int i;
-        for (i = 0; transactions[i].name != terminator; i++)
+        for (i = 0; transactions[i].from != terminator; i++)
         {
-            new_transactions[i].name = transactions[i].name;
-            new_transactions[i].password = transactions[i].password;
-            new_transactions[i].number = transactions[i].number;
-            new_transactions[i].balance = transactions[i].balance;
+            new_transactions[i].from = transactions[i].from;
+            new_transactions[i].to = transactions[i].to;
+            new_transactions[i].amount = transactions[i].amount;
         }
         // adding the latest added transaction
-        new_transactions[i].name = transaction.name;
-        new_transactions[i].password = transaction.password;
-        new_transactions[i].number = transaction.number;
-        new_transactions[i].balance = transaction.balance;
+        new_transactions[i].from = new_transaction.from;
+        new_transactions[i].to = new_transaction.to;
+        new_transactions[i].amount = new_transaction.amount;
 
-        new_transactions[++i].name = terminator;
+        new_transactions[++i].from = terminator;
 
         // save in database
         save_all_users(users);
