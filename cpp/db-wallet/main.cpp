@@ -128,6 +128,13 @@ void transfer_amount()
     string n;
     cin >> n;
 
+    while (n == current_user.number)
+    {
+        cout << "HAHA - NICE TRY! You can't send money to your self 😜" << endl;
+        cout << "Enter the number of receiver: ";
+        cin >> n;
+    }
+
     User *users = get_users();
     int receiver_index = get_user_index_by_number(n);
     int sender_index = get_user_index_by_number(current_user.number);
@@ -225,25 +232,44 @@ void show_history()
         length++;
     }
 
-    // from to ammount
+    // from to amount
     // because there are only three properties
     int rows = length + 1;
-    int cols = 3;
+    int cols = 7;
     string **matrix = new string *[length + 1];
     for (int i = 0; i < length + 1; i++)
     {
         matrix[i] = new string[cols];
     }
 
-    matrix[0][0] = "From";
-    matrix[0][1] = "To";
-    matrix[0][2] = "Amount";
-    for (int i = 0; transactions[i].from != terminator; i++)
+    matrix[0][0] = "Sr.";
+    matrix[0][1] = "Sender No.";
+    matrix[0][2] = "Sender";
+    matrix[0][3] = "Receiver No.";
+    matrix[0][4] = "Receiver";
+    matrix[0][5] = "Amount";
+    matrix[0][6] = "Payment Status";
+    int i;
+    for (i = 0; transactions[i].from != terminator; i++)
+    {
+        // to go from last to the first, first i should go to last
+    }
+    // it is out of index
+    // move left the index to the last element
+    i--;
+    int row_counter = 1;
+    while (i >= 0)
     {
         Transaction t = transactions[i];
-        matrix[i + 1][0] = t.from;
-        matrix[i + 1][1] = t.to;
-        matrix[i + 1][2] = t.amount;
+        matrix[row_counter][0] = to_string(row_counter);
+        matrix[row_counter][1] = t.from;
+        matrix[row_counter][2] = get_user_by_number(t.from).name;
+        matrix[row_counter][3] = t.to;
+        matrix[row_counter][4] = get_user_by_number(t.to).name;
+        matrix[row_counter][5] = to_string(t.amount) + " Rs.";
+        matrix[row_counter][6] = t.from == current_user.number ? "Sent" : "Received";
+        i--;
+        row_counter++;
     }
 
     // make a matrix then pass it to the show_as_table function
@@ -262,25 +288,43 @@ void show_history()
 
 void show_as_table(string **matrix, int rows, int cols)
 {
+    // Calculate the maximum length of strings in each column
     int max_col_lengths[cols];
-    // set the default value with the length of first row values
     for (int i = 0; i < cols; i++)
     {
-        // because we need two empty spaces on both sides
-        max_col_lengths[i] = str_len(matrix[0][i]) + 10;
-    }
-    // now check for all the columns
-    for (int i = 0; i < cols; i++)
-    {
+        max_col_lengths[i] = 0;
         for (int j = 0; j < rows; j++)
         {
-            int new_length = str_len(matrix[j][i]) + 10;
-            if (new_length > max_col_lengths[i])
+            int len = str_len(matrix[j][i]);
+            if (len > max_col_lengths[i])
             {
-                max_col_lengths[i] = new_length;
+                max_col_lengths[i] = len;
             }
         }
     }
+
+    // Display the table
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            cout << "+-" << string(max_col_lengths[j], '-') << "-";
+        }
+        cout << "+" << endl;
+
+        for (int j = 0; j < cols; j++)
+        {
+            cout << "| " << matrix[i][j] << string(max_col_lengths[j] - str_len(matrix[i][j]), ' ') << " ";
+        }
+        cout << "|" << endl;
+    }
+
+    // Bottom border of the table
+    for (int j = 0; j < cols; j++)
+    {
+        cout << "+-" << string(max_col_lengths[j], '-') << "-";
+    }
+    cout << "+" << endl;
 }
 
 void logout()
@@ -619,7 +663,7 @@ Transaction *get_transactions_of_user(string user_number)
     int counter = 0;
     for (int i = 0; transactions[i].from != terminator; i++)
     {
-        if (transactions[i].from == user_number)
+        if (transactions[i].from == user_number || transactions[i].to == user_number)
         {
             user_transactions[counter] = transactions[i];
             counter++;
