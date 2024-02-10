@@ -331,6 +331,8 @@ void logout()
     clear();
     cout << "You are logged out successfully 😃" << endl;
     cout << endl;
+
+    // RECURSIVELY calling the main function
     main();
 }
 
