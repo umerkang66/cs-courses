@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <ctime>
 
 using namespace std;
 
@@ -16,6 +17,20 @@ struct Transaction
     string from;
     string to;
     int amount;
+};
+
+struct Loan
+{
+    string taker;
+    int amount;
+    // last date should be 30 days after now()
+    // seconds in 1 minute = 60
+    // seconds in 1 hour = 60 * 60
+    // seconds in 1 day = 24 * 60 * 60
+    // seconds in 30 days = 30 * 24 * 60 * 60
+    // so last_date should be now() + (30 * 24 * 60 * 60)
+    time_t last_date;
+    string status; // paid || unpaid
 };
 
 const string terminator = "---";
@@ -41,6 +56,11 @@ Transaction *get_transactions_of_user(string user_number);
 User get_user_by_number(string user_number);
 void transfer_amount();
 int get_user_index_by_number(string user_number);
+Loan *get_loans();
+Loan *get_loans_of_user(string user_number);
+void handle_take_loan();
+void show_my_loans();
+void save_all_loans(Loan *loans);
 
 // UTILITY FUNCTIONS
 string *split(string str, char separator);
@@ -116,13 +136,174 @@ void start_app()
             // return because logout will start the new application
             return;
         }
+        else if (answer == 5)
+        {
+            handle_take_loan();
+        }
+        else if (answer == 6)
+        {
+            show_my_loans();
+        }
     }
 
     exit(0);
 }
 
+void handle_take_loan()
+{
+    cout << endl;
+    if (current_user.balance < 0)
+    {
+        cout << "You are not Eligible" << endl;
+        return;
+    }
+    if (current_user.balance >= 50)
+    {
+        cout << "Loan can only be eligible if your balance is LESS THAN 50" << endl;
+        return;
+    }
+
+    // now handle the loan
+    // 1) First check if user didn't have unpaid loans
+    bool eligible = true;
+    Loan *loans = get_loans_of_user(current_user.number);
+    int length = 0;
+    for (int i = 0; loans[i].taker != terminator; i++)
+    {
+        length++;
+        if (loans[i].status == "unpaid")
+        {
+            eligible = false;
+        }
+    }
+    if (!eligible)
+    {
+        cout << "You have some unpaid loans. Return the loan to access the new loan" << endl;
+        return;
+    }
+
+    // create a new loan
+    Loan new_loan;
+    new_loan.taker = current_user.number;
+    cout << endl;
+    cout << "How much amount you want to take the loan: ";
+    cin >> new_loan.amount;
+    new_loan.status = "unpaid";
+    // current_time + 30 days in seconds
+    new_loan.last_date = time(nullptr) + (30 * 24 * 60 * 60);
+
+    // get the user and add the new amount to current_user balance
+    int current_user_index = get_user_index_by_number(current_user.number);
+    User *users = get_users();
+    users[current_user_index].balance += new_loan.amount;
+    // UPDATING THE CURRENT USER
+    current_user = users[current_user_index];
+
+    // make new array and copy all the elements in the new array
+    // +1 is for the new transaction
+    // and +1 is for the new terminator string
+    Loan *new_loans = new Loan[length + 2];
+    int i;
+    for (i = 0; loans[i].taker != terminator; i++)
+    {
+        new_loans[i].taker = loans[i].taker;
+        new_loans[i].amount = loans[i].amount;
+        new_loans[i].last_date = loans[i].last_date;
+        new_loans[i].status = loans[i].status;
+    }
+    // adding the latest added transaction
+    new_loans[i].taker = new_loan.taker;
+    new_loans[i].amount = new_loan.amount;
+    new_loans[i].last_date = new_loan.last_date;
+    new_loans[i].status = new_loan.status;
+
+    new_loans[++i].taker = terminator;
+
+    // save in database
+    save_all_users(users);
+    save_all_loans(new_loans);
+
+    delete[] users;
+    delete[] loans;
+    delete[] new_loans;
+}
+
+void show_my_loans()
+{
+    cout << endl;
+    Loan *loans = get_loans_of_user(current_user.number);
+
+    int length = 0;
+    for (int i = 0; loans[i].taker != terminator; i++)
+    {
+        length++;
+    }
+
+    // from to amount
+    // because there are only three properties
+    int rows = length + 1;
+    int cols = 4;
+    string **matrix = new string *[length + 1];
+    for (int i = 0; i < length + 1; i++)
+    {
+        matrix[i] = new string[cols];
+    }
+
+    matrix[0][0] = "Sr.";
+    matrix[0][1] = "Amount";
+    matrix[0][2] = "Status";
+    matrix[0][3] = "Last Date";
+    int i;
+    for (i = 0; loans[i].taker != terminator; i++)
+    {
+        // to go from last to the first, first i should go to last
+    }
+    // it is out of index
+    // move left the index to the last element
+    i--;
+    int row_counter = 1;
+    while (i >= 0)
+    {
+        Loan loan = loans[i];
+        matrix[row_counter][0] = to_string(row_counter);
+        matrix[row_counter][1] = to_string(loan.amount);
+        matrix[row_counter][2] = loan.status;
+        matrix[row_counter][3] = ctime(&loan.last_date);
+        i--;
+        row_counter++;
+    }
+
+    // make a matrix then pass it to the show_as_table function
+    show_as_table(matrix, rows, cols);
+
+    // deallocating the memory
+    for (int i = 0; i < length + 1; ++i)
+    {
+        delete[] matrix[i];
+    }
+    delete[] matrix;
+
+    delete[] loans;
+}
+
 void transfer_amount()
 {
+    // If the user has unpaid loan, and last date is passed
+    // block the transfer
+    Loan *loans = get_loans_of_user(current_user.number);
+    for (int i = 0; loans[i].taker != terminator; i++)
+    {
+        time_t current_time = time(nullptr);
+        if (loans[i].status == "unpaid" && (current_time > loans[i].last_date))
+        {
+            // means last date is passed and he hasn't paid the loan
+            cout << "You have to pay your loans before any further transactions" << endl;
+            delete[] loans;
+            return;
+        }
+    }
+    delete[] loans;
+
     cout << endl;
     cout << "Enter the number of receiver: ";
     string n;
@@ -343,14 +524,16 @@ int show_and_get_answer()
     cout << "2: Show history 🕰️" << endl;
     cout << "3: My account 📊" << endl;
     cout << "4: Logout 🔓" << endl;
+    cout << "5: Take LOAN 💰" << endl;
+    cout << "6: Show my Loans 💰" << endl;
     cout << "0: Exit 🚪" << endl;
     int n;
     cout << "Enter number from above: ";
     cin >> n;
 
-    while (n < 0 || n > 4)
+    while (n < 0 || n > 6)
     {
-        cout << "Please enter between 1 and 4: ";
+        cout << "Please enter between 1 and 6: ";
         cin >> n;
     }
     return n;
@@ -548,6 +731,20 @@ void save_all_transactions(Transaction *transactions)
     save_table(rows, "transactions");
 }
 
+void save_all_loans(Loan *loans)
+{
+    // first we have create all the rows
+    string rows = "loans\ntaker,amount,last_date";
+    for (int i = 0; loans[i].taker != terminator; i++)
+    {
+        string row = loans[i].taker + ',' + to_string(loans[i].amount) + ',' + to_string(loans[i].last_date) + loans[i].status;
+        rows += '\n' + row;
+    }
+    rows += '\n';
+
+    save_table(rows, "loans");
+}
+
 // this will return the heap array, make sure to DEALLOCATE it
 User *get_users()
 {
@@ -671,6 +868,66 @@ Transaction *get_transactions_of_user(string user_number)
     return user_transactions;
 }
 
+// this will return the heap array, make sure to DEALLOCATE it
+Loan *get_loans()
+{
+    string loan_table = get_table("loans");
+
+    int length = 0;
+    string *lines = split(loan_table, '\n');
+    for (int i = 2; lines[i][0] != '\0'; i++)
+    {
+        length++;
+    }
+    // +1 is for the terminator character
+    Loan *loans = new Loan[length + 1];
+    int loans_counter = 0;
+
+    for (int i = 2; lines[i][0] != '\0'; i++)
+    {
+        // for every create an array by ',' separator
+        string *fields = split(lines[i], ',');
+        loans[loans_counter].taker = fields[0];
+        loans[loans_counter].amount = stoi(fields[1]);
+        loans[loans_counter].last_date = stoi(fields[2]);
+        loans[loans_counter].status = fields[3];
+        loans_counter++;
+
+        delete[] fields;
+    }
+
+    loans[loans_counter].taker = terminator;
+
+    delete[] lines;
+
+    return loans;
+}
+
+Loan *get_loans_of_user(string user_number)
+{
+    Loan *loans = get_loans();
+    int length = 0;
+    for (int i = 0; loans[i].taker != terminator; i++)
+    {
+        length++;
+    }
+    // +1 for the table terminator
+    Loan *user_loans = new Loan[length + 1];
+    int counter = 0;
+    for (int i = 0; loans[i].taker != terminator; i++)
+    {
+        if (loans[i].taker == user_number)
+        {
+            user_loans[counter] = loans[i];
+            counter++;
+        }
+    }
+    // add the table terminator in the taker property
+    user_loans[counter].taker = terminator;
+    delete[] loans;
+    return user_loans;
+}
+
 // UTILITY FUNCTIONS
 // This will split the string into an array by using the separator
 string *split(string str, char separator)
@@ -736,7 +993,7 @@ string get_all_tables()
         // there is no db file, first populate the db file with
         // appropriate data and and return that data
         // first reset the value
-        all_tables = "users\nname,password,phone_number,balance\n" + terminator + "\ntransactions\nfrom,to,amount\n" + terminator + "\n" + database_terminator;
+        all_tables = "users\nname,password,phone_number,balance\n" + terminator + "\ntransactions\nfrom,to,amount\n" + terminator + "\nloans\ntaker,amount,last_date,status\n" + terminator + '\n' + database_terminator;
 
         ofstream output("data.db");
         output << all_tables;
