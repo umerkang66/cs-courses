@@ -218,7 +218,6 @@ void transfer_amount()
     }
 
     delete[] users;
-    users = nullptr;
 }
 
 void show_history()
@@ -283,7 +282,6 @@ void show_history()
     delete[] matrix;
 
     delete[] transactions;
-    transactions = nullptr;
 }
 
 void show_as_table(string **matrix, int rows, int cols)
@@ -574,13 +572,11 @@ User *get_users()
         users_counter++;
 
         delete[] fields;
-        fields = nullptr;
     }
 
     users[users_counter].name = terminator;
 
     delete[] lines;
-    lines = nullptr;
 
     return users;
 }
@@ -639,13 +635,11 @@ Transaction *get_transactions()
         transactions_counter++;
 
         delete[] fields;
-        fields = nullptr;
     }
 
     transactions[transactions_counter].from = terminator;
 
     delete[] lines;
-    lines = nullptr;
 
     return transactions;
 }
@@ -672,7 +666,6 @@ Transaction *get_transactions_of_user(string user_number)
     // add the table terminator in the from property
     user_transactions[counter].from = terminator;
     delete[] transactions;
-    transactions = nullptr;
     return user_transactions;
 }
 
