@@ -1236,7 +1236,7 @@ string to_lower(string str)
     {
         if (str[i] >= 65 && str[i] <= 92)
         {
-            answer += (char)str[i] + 32;
+            answer += (char)(str[i] + 32);
         }
         else
         {
@@ -1253,7 +1253,7 @@ string to_upper(string str)
     {
         if (str[i] >= 97 && str[i] <= 122)
         {
-            answer += (char)str[i] - 32;
+            answer += (char)(str[i] - 32);
         }
         else
         {
