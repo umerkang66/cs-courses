@@ -61,6 +61,7 @@ Loan *get_loans_of_user(string user_number);
 void handle_take_loan();
 void show_my_loans();
 void save_all_loans(Loan *loans);
+void handle_repay_loan();
 
 // UTILITY FUNCTIONS
 string *split(string str, char separator);
@@ -144,6 +145,10 @@ void start_app()
         {
             show_my_loans();
         }
+        else if (answer == 7)
+        {
+            handle_repay_loan();
+        }
     }
 
     exit(0);
@@ -185,7 +190,6 @@ void handle_take_loan()
     // create a new loan
     Loan new_loan;
     new_loan.taker = current_user.number;
-    cout << endl;
     cout << "How much amount you want to take the loan: ";
     cin >> new_loan.amount;
     new_loan.status = "unpaid";
@@ -198,6 +202,7 @@ void handle_take_loan()
     users[current_user_index].balance += new_loan.amount;
     // UPDATING THE CURRENT USER
     current_user = users[current_user_index];
+    cout << "You have successfully CLAIMED the loan of Rs. " << new_loan.amount << endl;
 
     // make new array and copy all the elements in the new array
     // +1 is for the new transaction
@@ -228,9 +233,51 @@ void handle_take_loan()
     delete[] new_loans;
 }
 
-void show_my_loans()
+void handle_repay_loan()
 {
     cout << endl;
+    Loan *loans = get_loans_of_user(current_user.number);
+    int total_unpaid_amount = 0;
+    for (int i = 0; loans[i].taker != terminator; i++)
+    {
+        if (loans[i].status == "unpaid")
+            total_unpaid_amount += loans[i].amount;
+    }
+
+    if (total_unpaid_amount == 0)
+    {
+        cout << "You don't have unpaid loan" << endl;
+        return;
+    }
+
+    cout << "Pay Rs. " << total_unpaid_amount << " (y/n): ";
+    char yesOrNo;
+    cin >> yesOrNo;
+
+    if ((yesOrNo == 'y' || yesOrNo == 'Y') && current_user.balance >= total_unpaid_amount)
+    {
+        for (int i = 0; loans[i].taker != terminator; i++)
+        {
+            if (loans[i].status == "unpaid")
+                loans[i].status = "paid";
+        }
+        save_all_loans(loans);
+
+        // update the currentuser
+        User *users = get_users();
+        int idx = get_user_index_by_number(current_user.number);
+        users[idx].balance -= total_unpaid_amount;
+        current_user = users[idx];
+        save_all_users(users);
+        cout << "You have PAID all of the LOAN" << endl;
+
+        delete[] users;
+    }
+    delete[] loans;
+}
+
+void show_my_loans()
+{
     Loan *loans = get_loans_of_user(current_user.number);
 
     int length = 0;
@@ -252,27 +299,25 @@ void show_my_loans()
     matrix[0][0] = "Sr.";
     matrix[0][1] = "Amount";
     matrix[0][2] = "Status";
-    matrix[0][3] = "Last Date";
+    matrix[0][3] = "Last Date & Time";
     int i;
     for (i = 0; loans[i].taker != terminator; i++)
     {
-        // to go from last to the first, first i should go to last
-    }
-    // it is out of index
-    // move left the index to the last element
-    i--;
-    int row_counter = 1;
-    while (i >= 0)
-    {
         Loan loan = loans[i];
-        matrix[row_counter][0] = to_string(row_counter);
-        matrix[row_counter][1] = to_string(loan.amount);
-        matrix[row_counter][2] = loan.status;
-        matrix[row_counter][3] = ctime(&loan.last_date);
-        i--;
-        row_counter++;
+        matrix[i + 1][0] = to_string(i + 1);
+        matrix[i + 1][1] = to_string(loan.amount);
+        matrix[i + 1][2] = loan.status;
+
+        char formattedTime[20]; // Adjust the size as needed
+        strftime(formattedTime, sizeof(formattedTime), "%d-%m-%Y", localtime(&loan.last_date));
+        matrix[i + 1][3] = formattedTime;
+
+        string full_time = ctime(&loan.last_date);
+        string time = full_time.substr(11, 8);
+        matrix[i + 1][3] += " " + time;
     }
 
+    cout << endl;
     // make a matrix then pass it to the show_as_table function
     show_as_table(matrix, rows, cols);
 
@@ -432,24 +477,14 @@ void show_history()
     int i;
     for (i = 0; transactions[i].from != terminator; i++)
     {
-        // to go from last to the first, first i should go to last
-    }
-    // it is out of index
-    // move left the index to the last element
-    i--;
-    int row_counter = 1;
-    while (i >= 0)
-    {
         Transaction t = transactions[i];
-        matrix[row_counter][0] = to_string(row_counter);
-        matrix[row_counter][1] = t.from;
-        matrix[row_counter][2] = get_user_by_number(t.from).name;
-        matrix[row_counter][3] = t.to;
-        matrix[row_counter][4] = get_user_by_number(t.to).name;
-        matrix[row_counter][5] = to_string(t.amount) + " Rs.";
-        matrix[row_counter][6] = t.from == current_user.number ? "Sent" : "Received";
-        i--;
-        row_counter++;
+        matrix[i + 1][0] = to_string(i + 1);
+        matrix[i + 1][1] = t.from;
+        matrix[i + 1][2] = get_user_by_number(t.from).name;
+        matrix[i + 1][3] = t.to;
+        matrix[i + 1][4] = get_user_by_number(t.to).name;
+        matrix[i + 1][5] = to_string(t.amount) + " Rs.";
+        matrix[i + 1][6] = t.from == current_user.number ? "Sent" : "Received";
     }
 
     // make a matrix then pass it to the show_as_table function
@@ -524,16 +559,17 @@ int show_and_get_answer()
     cout << "2: Show history 🕰️" << endl;
     cout << "3: My account 📊" << endl;
     cout << "4: Logout 🔓" << endl;
-    cout << "5: Take LOAN 💰" << endl;
+    cout << "5: Take LOAN 🏦" << endl;
     cout << "6: Show my Loans 💰" << endl;
+    cout << "7: Pay my Loans 💳" << endl;
     cout << "0: Exit 🚪" << endl;
     int n;
     cout << "Enter number from above: ";
     cin >> n;
 
-    while (n < 0 || n > 6)
+    while (n < 0 || n > 7)
     {
-        cout << "Please enter between 1 and 6: ";
+        cout << "Please enter between 1 and 7: ";
         cin >> n;
     }
     return n;
@@ -737,7 +773,7 @@ void save_all_loans(Loan *loans)
     string rows = "loans\ntaker,amount,last_date";
     for (int i = 0; loans[i].taker != terminator; i++)
     {
-        string row = loans[i].taker + ',' + to_string(loans[i].amount) + ',' + to_string(loans[i].last_date) + loans[i].status;
+        string row = loans[i].taker + ',' + to_string(loans[i].amount) + ',' + to_string(loans[i].last_date) + ',' + loans[i].status;
         rows += '\n' + row;
     }
     rows += '\n';
