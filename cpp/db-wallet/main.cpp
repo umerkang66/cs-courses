@@ -62,6 +62,7 @@ void handle_take_loan();
 void show_my_loans();
 void save_all_loans(Loan *loans);
 void handle_repay_loan();
+bool does_user_exists(User user);
 
 // UTILITY FUNCTIONS
 string *split(string str, char separator);
@@ -671,6 +672,15 @@ void signin_user()
     delete[] users;
 }
 
+bool is_number_valid(string number)
+{
+    if (number[0] != '0' || number[1] != '3' || str_len(number) != 11)
+    {
+        return false;
+    }
+    return true;
+}
+
 User create_user()
 {
     User user;
@@ -680,6 +690,11 @@ User create_user()
 
     cout << "Enter your number: ";
     getline(cin, user.number);
+    while (!is_number_valid(user.number))
+    {
+        cout << "Please enter a valid number: ";
+        getline(cin, user.number);
+    }
 
     cout << "Enter your password 8 characters are allowed: ";
     getline(cin, user.password);
@@ -688,10 +703,32 @@ User create_user()
     return user;
 }
 
+bool does_user_exists(User user)
+{
+    User *users = get_users();
+    for (int i = 0; users[i].name != terminator; i++)
+    {
+        if (users[i].number == user.number)
+        {
+            // someone already exists with this user_number
+            return true;
+        }
+    }
+    return false;
+}
+
 void signup_user()
 {
     // create the user in memory
     User user = create_user();
+
+    while (does_user_exists(user))
+    {
+        cout << endl;
+        cout << "Some already registered with this NUMBER" << endl;
+        user = create_user();
+    }
+
     // save the user in the file
     User *users = add_user_to_all_users(user);
     // saving all the users
