@@ -523,13 +523,23 @@ void show_as_table(string **matrix, int rows, int cols)
     {
         for (int j = 0; j < cols; j++)
         {
-            cout << "+-" << string(max_col_lengths[j], '-') << "-";
+            cout << "+-";
+            for (int k = 1; k <= max_col_lengths[j]; k++)
+            {
+                cout << "-";
+            }
+            cout << "-";
         }
         cout << "+" << endl;
 
         for (int j = 0; j < cols; j++)
         {
-            cout << "| " << matrix[i][j] << string(max_col_lengths[j] - str_len(matrix[i][j]), ' ') << " ";
+            cout << "| " << matrix[i][j];
+            for (int k = 1; k <= max_col_lengths[j] - str_len(matrix[i][j]); k++)
+            {
+                cout << ' ';
+            }
+            cout << " ";
         }
         cout << "|" << endl;
     }
@@ -537,7 +547,12 @@ void show_as_table(string **matrix, int rows, int cols)
     // Bottom border of the table
     for (int j = 0; j < cols; j++)
     {
-        cout << "+-" << string(max_col_lengths[j], '-') << "-";
+        cout << "+-";
+        for (int k = 1; k <= max_col_lengths[j]; k++)
+        {
+            cout << '-';
+        }
+        cout << "-";
     }
     cout << "+" << endl;
 }
