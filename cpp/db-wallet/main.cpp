@@ -442,6 +442,7 @@ void transfer_amount()
     else
     {
         cout << "You don't have enough balance 😢" << endl;
+        cout << "But don't worry you can take loans 🏦" << endl;
     }
 
     delete[] users;
