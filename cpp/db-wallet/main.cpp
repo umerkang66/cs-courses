@@ -586,7 +586,7 @@ int show_and_get_answer()
 
     while (n < 0 || n > 7)
     {
-        cout << "Please enter between 1 and 7: ";
+        cout << "Please enter between 0 and 7: ";
         cin >> n;
     }
     return n;
