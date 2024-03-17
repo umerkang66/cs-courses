@@ -1,5 +1,0 @@
-# this will ignore the files that have no extension
-*
-!*.*
-!memory
-!data-structures

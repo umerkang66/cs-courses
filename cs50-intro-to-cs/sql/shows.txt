@@ -1,2 +1,0 @@
-To download shows.db file, you have to run
-wget https://github.com/cs50/lectures/raw/2022/fall/7/src7/imdb/shows.db

@@ -1,6 +1,0 @@
-this is from constructor
-this is from constructor
-this is from constructor
-this is from constructor
-this is from constructor
--- 
