@@ -147,17 +147,11 @@ public:
         {
             int mid = start + (end - start) / 2;
             if (item > arr[mid])
-            {
                 start = mid + 1;
-            }
             else if (item < arr[mid])
-            {
                 end = mid - 1;
-            }
             else
-            {
                 return mid;
-            }
         }
         return -1;
     }
