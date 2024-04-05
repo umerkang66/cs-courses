@@ -195,7 +195,6 @@ int main()
     Array arr;
     arr.push(5).push(3).push(1).push(4).push(2);
     cout << arr << endl;
-    cout << arr[2] << endl;
 
     return 0;
 }
