@@ -20,14 +20,17 @@ private:
         new_arr = NULL;
     }
 
-    void increase_arr_size()
+    void check_and_increase_arr_size()
     {
         // make the array growable, now make the size double
-        size *= 2;
-        create_and_update_arr(size);
+        if (length >= size)
+        {
+            size *= 2;
+            create_and_update_arr(size);
+        }
     }
 
-    void decrease_arr_size()
+    void check_and_decrease_arr_size()
     {
         if (length <= size / 2)
         {
@@ -49,20 +52,16 @@ public:
 
     Array &push(int item)
     {
-        if (length >= size)
-        {
-            increase_arr_size();
-        }
+
+        check_and_increase_arr_size();
+
         arr[length++] = item;
         return *this;
     }
 
     Array &insert(int i, int item)
     {
-        if (length >= size)
-        {
-            increase_arr_size();
-        }
+        check_and_increase_arr_size();
         // now shift the elements
         for (int b_counter = length - 1; b_counter >= 1; b_counter--)
         {
@@ -83,7 +82,7 @@ public:
         // this isn't necessary because we are just decreasing the length
         arr[length--] = -1;
         // it should first check, if it is okay to decrease the size
-        decrease_arr_size();
+        check_and_decrease_arr_size();
         return popped_item;
     }
 
@@ -101,7 +100,7 @@ public:
         }
         length--;
         // it should first check, if it is okay to decrease the size
-        decrease_arr_size();
+        check_and_decrease_arr_size();
         return removed_item;
     }
 
