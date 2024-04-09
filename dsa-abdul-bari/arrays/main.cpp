@@ -179,10 +179,9 @@ public:
 
 int main()
 {
-    Array<Array<int>> *parent_array = new Array<Array<int>>(5);
-
-    parent_array->fill((new Array<int>(2))->fill(25));
-    cout << *parent_array << endl;
+    Array<int> arr;
+    arr.push(1).push(3).push(4).push(5);
+    cout << arr << endl;
 
     return 0;
 }
