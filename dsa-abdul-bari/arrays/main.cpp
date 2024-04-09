@@ -52,7 +52,7 @@ public:
         length = 0;
     }
 
-    Array &push(T item)
+    Array &push(const T &item)
     {
         check_and_increase_arr_size();
 
@@ -60,7 +60,7 @@ public:
         return *this;
     }
 
-    Array &insert(int i, T item)
+    Array &insert(int i, const T &item)
     {
         check_and_increase_arr_size();
         // now shift the elements
