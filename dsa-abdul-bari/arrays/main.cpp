@@ -1,15 +1,16 @@
 #include <iostream>
 using namespace std;
 
+template <class T>
 class Array
 {
 private:
     int size;
-    int *arr;
+    T *arr;
 
     void create_and_update_arr(int size)
     {
-        int *new_arr = new int[size];
+        T *new_arr = new T[size];
         // copy every element of first array into second element
         for (int i = 0; i < length; i++)
         {
@@ -46,20 +47,19 @@ public:
     Array(int n = 10)
     {
         size = n;
-        arr = new int[n];
+        arr = new T[size];
         length = 0;
     }
 
-    Array &push(int item)
+    Array &push(T item)
     {
-
         check_and_increase_arr_size();
 
         arr[length++] = item;
         return *this;
     }
 
-    Array &insert(int i, int item)
+    Array &insert(int i, T item)
     {
         check_and_increase_arr_size();
         // now shift the elements
@@ -72,13 +72,13 @@ public:
         return *this;
     }
 
-    int pop()
+    T pop()
     {
         if (length == 0)
         {
             throw "Array is empty";
         }
-        int popped_item = arr[length];
+        T popped_item = arr[length];
         // this isn't necessary because we are just decreasing the length
         arr[length--] = -1;
         // it should first check, if it is okay to decrease the size
@@ -86,13 +86,13 @@ public:
         return popped_item;
     }
 
-    int remove(int i)
+    T remove(int i)
     {
         if (length == 0)
         {
             throw "Array is empty";
         }
-        int removed_item = arr[i];
+        T removed_item = arr[i];
         // now shift the array items backward
         for (int c = i; c < length - 1; c++)
         {
@@ -104,13 +104,13 @@ public:
         return removed_item;
     }
 
-    void sort()
+    Array &sort()
     {
         // using the selection sort algorithm
-        for (int i = 0; i < length; i++)
+        for (T i = 0; i < length; i++)
         {
             // find the smallest
-            int smallest = i;
+            T smallest = i;
             for (int j = i + 1; j < length; j++)
             {
                 if (arr[j] < arr[smallest])
@@ -119,48 +119,31 @@ public:
                 }
             }
             // smallest is found, swap with the current element
-            int temp = arr[smallest];
+            T temp = arr[smallest];
             arr[smallest] = arr[i];
             arr[i] = temp;
         }
+        return *this;
     }
 
-    int linear_search(int item)
+    Array &reverse()
     {
-        for (int i = 0; i < length; i++)
+        for (int i = 0, j = length - 1; i <= j; i++, j--)
         {
-            if (arr[i] == item)
-            {
-                return i;
-            }
+            T temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
         }
-        return -1;
+        return *this;
     }
 
-    // make sure the array is sorted
-    int binary_search(int item)
+    T &operator[](T index)
     {
-        int start = 0;
-        int end = length - 1;
-        while (start <= end)
-        {
-            int mid = start + (end - start) / 2;
-            if (item > arr[mid])
-                start = mid + 1;
-            else if (item < arr[mid])
-                end = mid - 1;
-            else
-                return mid;
-        }
-        return -1;
-    }
-
-    int &operator[](int index)
-    {
-        if (index >= length)
+        if (index < 0 || index >= length)
         {
             throw "Index out of bounds";
         }
+        check_and_increase_arr_size();
         return arr[index];
     }
 
@@ -191,8 +174,8 @@ public:
 
 int main()
 {
-    Array arr;
-    arr.push(5).push(3).push(1).push(4).push(2);
+    Array<int> arr;
+    arr.push(1).push(5).push(3).push(10).push(8);
     cout << arr << endl;
 
     return 0;
