@@ -147,7 +147,8 @@ public:
         return arr[index];
     }
 
-    friend ostream &operator<<(ostream &cout, Array &array)
+    // if it is an array of complex object, make sure that complex object also has operator<< for cout overloaded
+    friend ostream &operator<<(ostream &cout, Array<T> &array)
     {
         cout << "Size: " << array.size << " - "
              << "Length: " << array.length << " -> ";
