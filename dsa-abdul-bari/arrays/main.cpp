@@ -1,4 +1,5 @@
 #include <iostream>
+
 using namespace std;
 
 template <class T>
@@ -78,7 +79,7 @@ public:
         {
             throw "Array is empty";
         }
-        T popped_item = arr[length];
+        T popped_item = arr[length - 1];
         // this isn't necessary because we are just decreasing the length
         arr[length--] = -1;
         // it should first check, if it is okay to decrease the size
@@ -104,13 +105,14 @@ public:
         return removed_item;
     }
 
+    // to sort an array of objects, we have to overload this < operator
     Array &sort()
     {
         // using the selection sort algorithm
-        for (T i = 0; i < length; i++)
+        for (int i = 0; i < length; i++)
         {
             // find the smallest
-            T smallest = i;
+            int smallest = i;
             for (int j = i + 1; j < length; j++)
             {
                 if (arr[j] < arr[smallest])
@@ -137,7 +139,7 @@ public:
         return *this;
     }
 
-    T &operator[](T index)
+    T &operator[](int index)
     {
         if (index < 0 || index >= length)
         {
