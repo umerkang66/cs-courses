@@ -128,6 +128,16 @@ public:
         return *this;
     }
 
+    Array &fill(const T &item)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            arr[i] = item;
+            length++;
+        }
+        return *this;
+    }
+
     Array &reverse()
     {
         for (int i = 0, j = length - 1; i <= j; i++, j--)
@@ -152,8 +162,6 @@ public:
     // if it is an array of complex object, make sure that complex object also has operator<< for cout overloaded
     friend ostream &operator<<(ostream &cout, Array<T> &array)
     {
-        cout << "Size: " << array.size << " - "
-             << "Length: " << array.length << " -> ";
         cout << '[';
         for (int i = 0; i < array.length; i++)
         {
@@ -167,19 +175,14 @@ public:
         cout << ']';
         return cout;
     }
-
-    ~Array()
-    {
-        delete[] arr;
-        arr = NULL;
-    }
 };
 
 int main()
 {
-    Array<int> arr;
-    arr.push(1).push(5).push(3).push(10).push(8);
-    cout << arr << endl;
+    Array<Array<int>> *parent_array = new Array<Array<int>>(5);
+
+    parent_array->fill((new Array<int>(2))->fill(25));
+    cout << *parent_array << endl;
 
     return 0;
 }
