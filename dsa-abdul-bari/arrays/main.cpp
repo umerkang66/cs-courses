@@ -175,6 +175,12 @@ public:
         cout << ']';
         return cout;
     }
+
+    ~Array()
+    {
+        delete[] arr;
+        arr = NULL;
+    }
 };
 
 int main()
