@@ -6,6 +6,23 @@ struct ListNode
     int data;
     ListNode *next = NULL;
     ListNode(int data) { this->data = data; }
+
+    friend ostream &operator<<(ostream &os, ListNode &list_node)
+    {
+        os << "[";
+        ListNode *current_node = &list_node;
+        while (current_node != NULL)
+        {
+            os << current_node->data;
+            if (current_node->next != NULL)
+            {
+                os << " --> ";
+            }
+            current_node = current_node->next;
+        }
+        os << "]";
+        return os;
+    }
 };
 
 class LinkedList
@@ -181,11 +198,10 @@ public:
 int main()
 {
     LinkedList linked_list;
-    linked_list.append(0).append(1).append(2).append(3).append(3).append(3).append(4);
+    linked_list.append(0).append(1).append(2).append(3).append(4);
 
-    cout << linked_list << endl;
-    linked_list.reverse();
-    cout << linked_list << endl;
+    LinkedList linked_list2;
+    linked_list2.append(25).append(30).append(40);
 
     return 0;
 }
