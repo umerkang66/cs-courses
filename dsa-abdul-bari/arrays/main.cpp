@@ -185,9 +185,19 @@ public:
 
 int main()
 {
-    Array<int> arr;
-    arr.push(1).push(3).push(4).push(5);
-    cout << arr << endl;
+    Array<int> *a1 = new Array<int>();
+    Array<int> *a2 = new Array<int>();
+    Array<int> *a3 = new Array<int>();
+    a1->push(1);
+    a2->push(2);
+    a3->push(3);
+
+    Array<Array<int>> array;
+    array.push(*a1);
+    array.push(*a2);
+    array.push(*a3);
+
+    cout << array << endl;
 
     return 0;
 }
