@@ -1,16 +1,17 @@
 #include <iostream>
 using namespace std;
 
+template <class T>
 struct ListNode
 {
-    int data;
-    ListNode *next = NULL;
-    ListNode(int data) { this->data = data; }
+    T data;
+    ListNode<T> *next = NULL;
+    ListNode(const T &data) { this->data = data; }
 
-    friend ostream &operator<<(ostream &os, ListNode &list_node)
+    friend ostream &operator<<(ostream &os, ListNode<T> &list_node)
     {
         os << "[";
-        ListNode *current_node = &list_node;
+        ListNode<T> *current_node = &list_node;
         while (current_node != NULL)
         {
             os << current_node->data;
@@ -25,16 +26,17 @@ struct ListNode
     }
 };
 
+template <class T>
 class LinkedList
 {
-    ListNode *head;
+    ListNode<T> *head;
 
 public:
     LinkedList() { head = NULL; }
-    LinkedList(int data) { head = new ListNode(data); }
-    ListNode *get_head() { return head; }
+    LinkedList(const T &data) { head = new ListNode<T>(data); }
+    ListNode<T> *get_head() { return head; }
 
-    LinkedList &append(int data)
+    LinkedList<T> &append(const T &data)
     {
         if (head == NULL)
         {
@@ -42,44 +44,44 @@ public:
             return *this;
         }
 
-        ListNode *current_node = head;
+        ListNode<T> *current_node = head;
         while (current_node->next != NULL)
         {
             current_node = current_node->next;
         }
-        current_node->next = new ListNode(data);
+        current_node->next = new ListNode<T>(data);
         return *this;
     }
 
-    LinkedList &prepend(int data)
+    LinkedList<T> &prepend(const T &data)
     {
         if (head == NULL)
         {
             head = new ListNode(data);
             return *this;
         }
-        ListNode *new_node = new ListNode(data);
+        ListNode<T> *new_node = new ListNode<T>(data);
         new_node->next = head;
         head = new_node;
         return *this;
     }
 
-    int remove(int index)
+    const T &remove(int index)
     {
         if (head == NULL)
         {
-            return -1;
+            throw "List is empty";
         }
 
         if (index < 0)
         {
-            return -1;
+            throw "Index out of bounds";
         }
 
         if (index == 0)
         {
-            ListNode *to_be_deleted = head;
-            int data = head->data;
+            ListNode<T> *to_be_deleted = head;
+            T data = head->data;
             head = head->next;
 
             delete to_be_deleted;
@@ -87,7 +89,7 @@ public:
         }
 
         int i = 0;
-        ListNode *current_node = head;
+        ListNode<T> *current_node = head;
         while (current_node != NULL && i < index - 1)
         {
             current_node = current_node->next;
@@ -97,11 +99,11 @@ public:
         // we are gonna actually delete the current_node->next one
         if (current_node == NULL || current_node->next == NULL)
         {
-            return -1;
+            throw "Index out of bounds";
         }
 
-        int data = current_node->next->data;
-        ListNode *to_be_removed = current_node->next;
+        T data = current_node->next->data;
+        ListNode<T> *to_be_removed = current_node->next;
 
         current_node->next = to_be_removed->next;
 
@@ -112,7 +114,7 @@ public:
     int length()
     {
         int i = 0;
-        ListNode *current_node = head;
+        ListNode<T> *current_node = head;
         while (current_node != NULL)
         {
             i++;
@@ -121,7 +123,7 @@ public:
         return i;
     }
 
-    LinkedList &insert(int index, int data)
+    LinkedList<T> &insert(int index, const T &data)
     {
         if (index == 0 || head == NULL)
         {
@@ -129,7 +131,7 @@ public:
             return *this;
         }
         int i = 0;
-        ListNode *current_node = head;
+        ListNode<T> *current_node = head;
         for (int i = 0; i < index - 1; i++, current_node = current_node->next)
         {
             if (current_node == NULL || current_node->next == NULL)
@@ -138,24 +140,24 @@ public:
                 return *this;
             }
         }
-        ListNode *new_node = new ListNode(data);
+        ListNode<T> *new_node = new ListNode<T>(data);
         new_node->next = current_node->next;
         current_node->next = new_node;
         return *this;
     }
 
-    LinkedList &reverse()
+    LinkedList<T> &reverse()
     {
         if (head == NULL || head->next == NULL)
         {
             return *this;
         }
-        ListNode *previous = NULL;
-        ListNode *current = head;
+        ListNode<T> *previous = NULL;
+        ListNode<T> *current = head;
 
         while (current != NULL)
         {
-            ListNode *next = current->next;
+            ListNode<T> *next = current->next;
             current->next = previous;
             previous = current;
             current = next;
@@ -166,10 +168,10 @@ public:
         return *this;
     }
 
-    friend ostream &operator<<(ostream &os, LinkedList &linked_list)
+    friend ostream &operator<<(ostream &os, LinkedList<T> &linked_list)
     {
         os << "[";
-        ListNode *current_node = linked_list.head;
+        ListNode<T> *current_node = linked_list.head;
         while (current_node != NULL)
         {
             os << current_node->data;
@@ -185,10 +187,10 @@ public:
 
     ~LinkedList()
     {
-        ListNode *current_node = head;
+        ListNode<T> *current_node = head;
         while (current_node != NULL)
         {
-            ListNode *next = current_node->next;
+            ListNode<T> *next = current_node->next;
             delete current_node;
             current_node = next;
         }
@@ -197,11 +199,17 @@ public:
 
 int main()
 {
-    LinkedList linked_list;
-    linked_list.append(0).append(1).append(2).append(3).append(4);
+    LinkedList<int> *l1 = new LinkedList<int>();
+    l1->append(1).append(2);
+    LinkedList<int> *l2 = new LinkedList<int>();
+    l2->append(3).append(4);
+    LinkedList<int> *l3 = new LinkedList<int>();
+    l3->append(5).append(6);
 
-    LinkedList linked_list2;
-    linked_list2.append(25).append(30).append(40);
+    LinkedList<LinkedList<int>> linked_list;
+    linked_list.append(*l1).append(*l2).append(*l3);
+
+    cout << linked_list << endl;
 
     return 0;
 }
