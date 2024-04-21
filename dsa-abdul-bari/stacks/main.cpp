@@ -49,7 +49,7 @@ public:
         length = 0;
     }
 
-    Stack &push(T n)
+    Stack &push(const T &n)
     {
         check_and_increase_stack_size();
         data[length++] = n;
@@ -100,5 +100,16 @@ public:
 
 int main()
 {
+    Stack<int> *s1 = new Stack<int>();
+    Stack<int> *s2 = new Stack<int>();
+    Stack<int> *s3 = new Stack<int>();
+
+    Stack<Stack<int>> stack;
+    stack.push(*s1);
+    stack.push(*s2);
+    stack.push(*s3);
+
+    cout << stack << endl;
+
     return 0;
 }
