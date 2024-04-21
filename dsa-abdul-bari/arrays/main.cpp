@@ -188,9 +188,9 @@ int main()
     Array<int> *a1 = new Array<int>();
     Array<int> *a2 = new Array<int>();
     Array<int> *a3 = new Array<int>();
-    a1->push(1);
-    a2->push(2);
-    a3->push(3);
+    a1->push(1).push(2);
+    a2->push(2).push(2);
+    a3->push(3).push(2);
 
     Array<Array<int>> array;
     array.push(*a1);
