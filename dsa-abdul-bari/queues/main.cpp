@@ -26,6 +26,7 @@ public:
         }
 
         node->next = queue;
+        queue = node;
         return *this;
     }
 
