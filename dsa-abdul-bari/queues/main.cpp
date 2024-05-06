@@ -30,7 +30,7 @@ public:
         return *this;
     }
 
-    T dequeue()
+    T &dequeue()
     {
         T data = queue->data;
         Node<T> *to_be_deleted = queue;
@@ -44,7 +44,7 @@ public:
         return queue == nullptr;
     }
 
-    T peek()
+    T &peek()
     {
         return queue->data;
     }
