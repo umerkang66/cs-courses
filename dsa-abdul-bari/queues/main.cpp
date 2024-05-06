@@ -13,40 +13,44 @@ struct Node
 template <class T>
 class Queue
 {
-    Node<T> *queue = nullptr;
+    Node<T> *first = nullptr;
+    Node<T> *last = nullptr;
 
 public:
     Queue &enqueue(const T &data)
     {
         Node<T> *node = new Node<T>(data);
-        if (queue == nullptr)
+        if (first == nullptr)
         {
-            queue = node;
+            first = node;
+            last = first;
             return *this;
         }
 
-        node->next = queue;
-        queue = node;
+        // go to the end of queue
+        last->next = node;
+        last = node;
+
         return *this;
     }
 
-    T &dequeue()
+    T dequeue()
     {
-        T data = queue->data;
-        Node<T> *to_be_deleted = queue;
-        queue = queue->next;
+        T data = first->data;
+        Node<T> *to_be_deleted = first;
+        first = first->next;
         delete to_be_deleted;
         return data;
     }
 
     bool is_empty()
     {
-        return queue == nullptr;
+        return first == nullptr;
     }
 
     T &peek()
     {
-        return queue->data;
+        return first->data;
     }
 };
 
@@ -57,8 +61,9 @@ int main()
 
     while (!queue.is_empty())
     {
-        cout << queue.dequeue() << endl;
+        cout << queue.dequeue() << " ";
     }
+    cout << endl;
 
     return 0;
 }
