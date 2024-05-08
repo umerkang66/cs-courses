@@ -40,7 +40,7 @@ public:
     {
         if (head == NULL)
         {
-            head = new ListNode(data);
+            head = new ListNode<T>(data);
             return *this;
         }
 
@@ -57,7 +57,7 @@ public:
     {
         if (head == NULL)
         {
-            head = new ListNode(data);
+            head = new ListNode<T>(data);
             return *this;
         }
         ListNode<T> *new_node = new ListNode<T>(data);
