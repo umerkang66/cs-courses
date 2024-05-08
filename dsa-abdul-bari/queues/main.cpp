@@ -10,6 +10,7 @@ struct Node
     Node(T data) : data(data) {}
 };
 
+// after using the queue, make sure to dequeue every element
 template <class T>
 class Queue
 {
@@ -51,6 +52,24 @@ public:
     {
         return first->data;
     }
+
+    friend ostream &operator<<(ostream &cout, Queue &queue)
+    {
+        cout << "{ ";
+        Node<T> *current = queue.first;
+        while (current != nullptr)
+        {
+            cout << current->data;
+            if (current->next != nullptr)
+            {
+                // not the last element
+                cout << " <- ";
+            }
+            current = current->next;
+        }
+        cout << " }";
+        return cout;
+    }
 };
 
 int main()
@@ -63,6 +82,8 @@ int main()
 
     Queue<Queue<int>> queue;
     queue.enqueue(*q1).enqueue(*q2);
+
+    cout << queue << endl;
 
     for (int i = 1; !queue.is_empty(); i++)
     {
