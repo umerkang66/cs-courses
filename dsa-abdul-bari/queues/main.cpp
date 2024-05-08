@@ -27,7 +27,6 @@ public:
             return *this;
         }
 
-        // go to the end of queue
         last->next = node;
         last = node;
 
@@ -37,9 +36,9 @@ public:
     T dequeue()
     {
         T data = first->data;
-        Node<T> *to_be_deleted = first;
+        Node<T> *temp = first;
         first = first->next;
-        delete to_be_deleted;
+        delete temp;
         return data;
     }
 
@@ -56,14 +55,25 @@ public:
 
 int main()
 {
-    Queue<int> queue;
-    queue.enqueue(1).enqueue(2).enqueue(3);
+    Queue<int> *q1 = new Queue<int>();
+    q1->enqueue(1).enqueue(2).enqueue(3);
 
-    while (!queue.is_empty())
+    Queue<int> *q2 = new Queue<int>();
+    q2->enqueue(4).enqueue(5).enqueue(6);
+
+    Queue<Queue<int>> queue;
+    queue.enqueue(*q1).enqueue(*q2);
+
+    for (int i = 1; !queue.is_empty(); i++)
     {
-        cout << queue.dequeue() << " ";
+        Queue<int> inner_queue = queue.dequeue();
+        cout << "Queue #" << i << ": ";
+        while (!inner_queue.is_empty())
+        {
+            cout << inner_queue.dequeue() << " ";
+        }
+        cout << endl;
     }
-    cout << endl;
 
     return 0;
 }
