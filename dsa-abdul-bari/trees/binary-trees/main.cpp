@@ -12,52 +12,66 @@ struct Node
   Node(int data) : data(data) {}
 };
 
-class Tree
+class BinaryTree
 {
   Node *root;
 
-  void append_nodes(Node *root, Queue<int> *queue)
+  void append_nodes(Node *node, Queue<int> *queue)
   {
     if (queue->is_empty())
     {
       return;
     }
 
-    root->left = new Node(queue->dequeue());
-    root->right = new Node(queue->dequeue());
+    node->left = new Node(queue->dequeue());
+    node->right = new Node(queue->dequeue());
 
-    append_nodes(root->left, queue);
-    append_nodes(root->right, queue);
+    append_nodes(node->left, queue);
+    append_nodes(node->right, queue);
   }
 
-  void build_tree(Node *root)
+  Node *build_tree(Node *node)
   {
-    cout << "Enter the data: ";
-    int n;
-    cin >> n;
-    root = new Node(n);
+    cout << "Enter the data: " << endl;
+    int data;
+    cin >> data;
+    node = new Node(data);
 
-    if (n == -1)
+    if (data == -1)
+    {
+      return nullptr;
+    }
+
+    cout << "Enter data for inserting in left of " << data << endl;
+    node->left = build_tree(node->left);
+    cout << "Enter data for inserting in right of " << data << endl;
+    node->right = build_tree(node->right);
+    return node;
+  }
+
+  void delete_nodes_destructor(Node *node)
+  {
+    if (node == nullptr)
     {
       return;
     }
 
-    cout << "Enter left of " << n << ": " << endl;
-    build_tree(root->left);
-    cout << "Enter right of " << n << ": " << endl;
-    build_tree(root->right);
+    delete_nodes_destructor(node->left);
+    delete_nodes_destructor(node->right);
+
+    delete node;
   }
 
 public:
-  Tree(Queue<int> *queue)
+  BinaryTree(Queue<int> *queue)
   {
     root = new Node(queue->dequeue());
     append_nodes(root, queue);
   }
 
-  Tree()
+  BinaryTree()
   {
-    build_tree(root);
+    root = build_tree(root);
   }
 
   Node *get_root()
@@ -65,31 +79,89 @@ public:
     return root;
   }
 
-  void delete_nodes(Node *node)
+  // bfs
+  void level_order_traversal(Node *root)
   {
-    if (node == nullptr)
+    Queue<Node *> queue;
+    queue.enqueue(root);
+    queue.enqueue(nullptr);
+
+    while (!queue.is_empty())
+    {
+      Node *temp = queue.dequeue();
+
+      if (temp == nullptr)
+      {
+        cout << endl;
+        if (!queue.is_empty())
+        {
+          queue.enqueue(nullptr);
+        }
+      }
+      else
+      {
+        cout << temp->data << " ";
+        if (temp->left)
+          queue.enqueue(temp->left);
+        if (temp->right)
+          queue.enqueue(temp->right);
+      }
+    }
+  }
+
+  void dfs_preorder(Node *node)
+  {
+    if (!node)
     {
       return;
     }
-
-    delete_nodes(node->left);
-    delete_nodes(node->right);
-
-    delete node;
+    cout << node->data << " ";
+    dfs_preorder(node->left);
+    dfs_preorder(node->right);
   }
 
-  ~Tree()
+  void dfs_postorder(Node *node)
   {
-    delete_nodes(root);
+    if (!node)
+    {
+      return;
+    }
+    dfs_preorder(node->left);
+    dfs_preorder(node->right);
+    cout << node->data << " ";
+  }
+
+  void dfs_inorder(Node *node)
+  {
+    if (!node)
+    {
+      return;
+    }
+    dfs_preorder(node->left);
+    cout << node->data << " ";
+    dfs_preorder(node->right);
+  }
+
+  ~BinaryTree()
+  {
+    delete_nodes_destructor(root);
   }
 };
 
 int main()
 {
-  Queue<int> queue;
-  queue.enqueue(1).enqueue(2).enqueue(3).enqueue(4).enqueue(5).enqueue(6).enqueue(7);
+  // 1 3 7 -1 -1 11 -1 -1 5 17 -1 -1 -1
+  BinaryTree tree;
+  tree.level_order_traversal(tree.get_root());
+  cout << endl;
 
-  Tree tree(&queue);
+  tree.dfs_preorder(tree.get_root());
+  cout << endl;
 
+  tree.dfs_postorder(tree.get_root());
+  cout << endl;
+
+  tree.dfs_inorder(tree.get_root());
+  cout << endl;
   return 0;
 }
