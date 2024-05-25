@@ -1,6 +1,3 @@
-#ifndef DB_HPP
-#define DB_HPP
-
 #include <string>
 using namespace std;
 
@@ -14,5 +11,3 @@ public:
   string get_database();
   void save_database(string);
 };
-
-#endif

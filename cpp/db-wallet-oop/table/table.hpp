@@ -1,6 +1,3 @@
-#ifndef TABLE_HPP
-#define TABLE_HPP
-
 #include <string>
 #include "../db/db.hpp"
 
@@ -18,5 +15,3 @@ public:
   void save_table(string rows, string name);
   string get_table(string name);
 };
-
-#endif
