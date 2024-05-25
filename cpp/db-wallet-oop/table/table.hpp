@@ -1,9 +1,11 @@
+#pragma once
+
 #include <string>
 #include "../db/db.hpp"
 
 using namespace std;
 
-class Table : public DB
+class Table
 {
   string table_name;
   // to which database this table belongs to
