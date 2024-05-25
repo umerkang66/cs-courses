@@ -1,11 +1,43 @@
 #include <iostream>
+#include "utils/utils.hpp"
 
-#include "db/db.hpp"
-#include "table/table.hpp"
+using namespace std;
+
+// Function to evaluate an expression
+void evaluate(const string &expression)
+{
+  string *tokens = split(expression, ' ');
+  for (int i = 0; tokens[i][0] != '\0'; i++)
+  {
+    cout << tokens[i] << " ";
+  }
+  cout << endl;
+}
 
 int main()
 {
-  Table *table = nullptr;
+  string input;
+  cout << "Start to write your Queries." << endl;
+
+  while (true)
+  {
+    cout << "> ";
+    getline(cin, input);
+
+    if (input == "exit")
+    {
+      break;
+    }
+
+    try
+    {
+      evaluate(input);
+    }
+    catch (const exception &e)
+    {
+      cerr << "Error: " << e.what() << endl;
+    }
+  }
 
   return 0;
 }

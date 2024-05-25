@@ -95,12 +95,12 @@ int str_include_end(int starting_index, string str, string check)
 }
 
 // This will split the string into an array by using the separator
-string *split(string str, char separator)
+string *split(const string &str, char delimeter)
 {
   int arr_length = 0;
   for (int i = 0; str[i] != '\0'; i++)
   {
-    if (str[i] == separator)
+    if (str[i] == delimeter)
     {
       arr_length++;
     }
@@ -115,7 +115,7 @@ string *split(string str, char separator)
   string one_string = "";
   for (int i = 0; str[i] != '\0'; i++)
   {
-    if (str[i] == separator)
+    if (str[i] == delimeter)
     {
       arr[arr_counter] = one_string;
       arr_counter++;
