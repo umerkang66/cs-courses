@@ -22,7 +22,7 @@ void Evaluate::evaluate(const string &expression)
     {
       handle_show_databases();
     }
-    else if (to_lower(tokens[1]) == "current" && str_includes(to_lower(tokens[1]), "database"))
+    else if (to_lower(tokens[1]) == "current" && str_includes(to_lower(tokens[2]), "database"))
     {
       handle_show_current_database();
     }

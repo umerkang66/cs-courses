@@ -13,7 +13,4 @@ class Table
 
 public:
   Table(string table_name, DB *database_ptr) : table_name(table_name), database_ptr(database_ptr) {}
-
-  void save_table(string rows, string name);
-  string get_table(string name);
 };
