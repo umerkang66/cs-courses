@@ -1,23 +1,13 @@
 #include <iostream>
 #include "utils/utils.hpp"
+#include "evaluate/evaluate.hpp"
 
 using namespace std;
-
-// Function to evaluate an expression
-void evaluate(const string &expression)
-{
-  string *tokens = split(expression, ' ');
-  for (int i = 0; tokens[i][0] != '\0'; i++)
-  {
-    cout << tokens[i] << " ";
-  }
-  cout << endl;
-}
 
 int main()
 {
   string input;
-  cout << "Start to write your Queries." << endl;
+  cout << "Start to write your Queries. To exit, type (exit)" << endl;
 
   while (true)
   {
@@ -31,7 +21,7 @@ int main()
 
     try
     {
-      evaluate(input);
+      Evaluate::evaluate(input);
     }
     catch (const exception &e)
     {

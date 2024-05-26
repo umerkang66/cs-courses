@@ -1,0 +1,11 @@
+users
+name,password,phone_number,balance
+Muhammad Umer,password,03183391245,100
+---
+transactions
+from,to,amount
+---
+loans
+taker,amount,last_date,status
+---
+------
