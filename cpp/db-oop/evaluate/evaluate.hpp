@@ -6,6 +6,7 @@
 
 #include "../utils/utils.hpp"
 #include "../db/db.hpp"
+#include "../table/table.hpp"
 #include "../constants.hpp"
 
 using namespace std;
@@ -41,6 +42,8 @@ public:
   void handle_show_databases();
 
   void handle_show_current_database();
+
+  void handle_create_table(string name, string columns);
 
   ~Evaluate()
   {

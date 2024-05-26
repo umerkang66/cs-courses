@@ -70,8 +70,9 @@ void DB::upsert_table(string rows, string name)
     {
       new_database += rows[i];
     }
+    // after adding the rows, add the new line
+    new_database += '\n';
     // after adding the rows also the table-terminator
-    // end + 1 is actually a '\n' character so we don't need to add it
     new_database += terminator;
     // now add the database after the end
     for (int i = start_of_database_terminator; database[i] != '\0'; i++)
@@ -103,8 +104,8 @@ void DB::upsert_table(string rows, string name)
   {
     new_database += rows[i];
   }
+  new_database += '\n';
   // after adding the rows also the table-terminator
-  // end + 1 is actually a '\n' character so we don't need to add it
   new_database += terminator;
   // now add the database after the end
   for (int i = end + 1; database[i] != '\0'; i++)

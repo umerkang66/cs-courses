@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 using namespace std;
 
 int str_include_start(string str, string check);
@@ -16,3 +17,7 @@ string to_lower(string str);
 string to_upper(string str);
 
 bool str_includes(const string &str, const string &substr);
+
+string joins(vector<string> arr, string separator);
+
+vector<string> split_into_vector(string str, char separator);

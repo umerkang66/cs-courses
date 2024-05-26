@@ -1,6 +1,4 @@
-#include "filesystem"
 #include "evaluate.hpp"
-#include "../constants.hpp"
 
 void Evaluate::evaluate(const string &expression)
 {
@@ -14,6 +12,10 @@ void Evaluate::evaluate(const string &expression)
     if (str_includes(to_lower(tokens[1]), "database"))
     {
       handle_create_database(tokens[2]);
+    }
+    else if (str_includes(to_lower(tokens[1]), "table"))
+    {
+      handle_create_table(tokens[2], tokens[3]);
     }
   }
   else if (to_lower(tokens[0]) == "show")
@@ -68,4 +70,10 @@ void Evaluate::handle_create_database(const string &name)
   current_db->save_database("");
   all_databases.push_back(current_db);
   cout << "DB: " << db_name << " CREATED" << endl;
+}
+
+void Evaluate::handle_create_table(string name, string columns)
+{
+  Table new_table(name, current_db);
+  new_table.create_table(split_into_vector(columns, ','));
 }

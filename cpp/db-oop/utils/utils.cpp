@@ -204,3 +204,32 @@ bool str_includes(const string &str, const string &substr)
   }
   return false;
 }
+
+string joins(vector<string> arr, string separator)
+{
+  string str = "";
+  for (int i = 0; i < arr.size(); i++)
+  {
+    str += arr[i];
+    if (i < arr.size() - 1)
+    {
+      str += separator;
+    }
+  }
+  return str;
+}
+
+vector<string> split_into_vector(string str, char separator)
+{
+  vector<string> arr;
+  int counter = 0;
+  for (int i = 0; str[i] != '\0'; i++)
+  {
+    if (str[i] == separator)
+    {
+      counter++;
+    }
+    arr[counter] += str[i];
+  }
+  return arr;
+}
