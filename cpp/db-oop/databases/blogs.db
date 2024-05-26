@@ -1,0 +1,10 @@
+users
+name,password,phone_number,balance
+---
+transactions
+from,to,amount
+---
+loans
+taker,amount,last_date,status
+---
+------

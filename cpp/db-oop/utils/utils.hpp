@@ -14,3 +14,5 @@ void clear();
 string to_lower(string str);
 
 string to_upper(string str);
+
+bool str_includes(const string &str, const string &substr);

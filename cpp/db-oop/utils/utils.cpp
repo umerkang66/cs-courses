@@ -178,3 +178,29 @@ string to_upper(string str)
   }
   return answer;
 }
+
+bool str_includes(const string &str, const string &substr)
+{
+  if (substr.empty())
+  {
+    return true;
+  }
+  if (str.size() < substr.size())
+  {
+    return false;
+  }
+
+  for (int i = 0; i <= str.size() - substr.size(); ++i)
+  {
+    int j = 0;
+    while (j < substr.size() && str[i + j] == substr[j])
+    {
+      ++j;
+    }
+    if (j == substr.size())
+    {
+      return true;
+    }
+  }
+  return false;
+}

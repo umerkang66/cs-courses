@@ -5,6 +5,8 @@
 #include "../constants.hpp"
 #include "../utils/utils.hpp"
 
+string DB::get_db_name() const { return db_name; }
+
 string DB::get_database()
 {
   // getting the db
