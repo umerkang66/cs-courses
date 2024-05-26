@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 
 #include "db.hpp"
 #include "../constants.hpp"
@@ -7,7 +8,7 @@
 string DB::get_database()
 {
   // getting the db
-  ifstream input(db_name);
+  ifstream input(ALL_DATABASES_FOLDER + '/' + db_name);
 
   string all_tables = "";
   string current_line;
@@ -31,7 +32,7 @@ string DB::get_database()
     // first reset the value
     all_tables = "users\nname,password,phone_number,balance\n" + terminator + "\ntransactions\nfrom,to,amount\n" + terminator + "\nloans\ntaker,amount,last_date,status\n" + terminator + '\n' + database_terminator;
 
-    ofstream output(db_name);
+    ofstream output(ALL_DATABASES_FOLDER + '/' + db_name);
     output << all_tables;
     output.close();
   }
@@ -41,7 +42,7 @@ string DB::get_database()
 
 void DB::save_database(string new_database)
 {
-  ofstream output(db_name);
+  ofstream output(ALL_DATABASES_FOLDER + '/' + db_name);
   output << new_database;
   output.close();
 }

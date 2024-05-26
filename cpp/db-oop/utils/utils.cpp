@@ -144,3 +144,37 @@ void clear()
   system("clear");
 #endif
 }
+
+string to_lower(string str)
+{
+  string answer = "";
+  for (int i = 0; str[i] != '\0'; i++)
+  {
+    if (str[i] >= 65 && str[i] <= 92)
+    {
+      answer += (char)(str[i] + 32);
+    }
+    else
+    {
+      answer += str[i];
+    }
+  }
+  return answer;
+}
+
+string to_upper(string str)
+{
+  string answer = "";
+  for (int i = 0; str[i] != '\0'; i++)
+  {
+    if (str[i] >= 97 && str[i] <= 122)
+    {
+      answer += (char)(str[i] - 32);
+    }
+    else
+    {
+      answer += str[i];
+    }
+  }
+  return answer;
+}

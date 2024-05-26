@@ -10,3 +10,7 @@ int str_include_end(int starting_index, string str, string check);
 string *split(const string &str, char delimeter);
 
 void clear();
+
+string to_lower(string str);
+
+string to_upper(string str);

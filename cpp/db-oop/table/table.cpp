@@ -1,5 +1,3 @@
-#include <fstream>
-
 #include "table.hpp"
 #include "../constants.hpp"
 #include "../utils/utils.hpp"

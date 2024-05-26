@@ -6,3 +6,4 @@ using namespace std;
 const string terminator = "---";
 const string database_terminator = "------";
 const string logged_out_number = "-1";
+const string ALL_DATABASES_FOLDER = "databases";

@@ -6,6 +6,7 @@ using namespace std;
 
 int main()
 {
+  Evaluate evaluator;
   string input;
   cout << "Start to write your Queries. To exit, type (exit)" << endl;
 
@@ -21,7 +22,7 @@ int main()
 
     try
     {
-      Evaluate::evaluate(input);
+      evaluator.evaluate(input);
     }
     catch (const exception &e)
     {
