@@ -1,7 +1,13 @@
 #pragma once
 
+#include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
+
+#include "../constants.hpp"
+#include "../utils/utils.hpp"
+
 using namespace std;
 
 class DB
@@ -18,5 +24,6 @@ public:
 
   // for getting specific tables
   string get_table(string name);
-  void upsert_table(string rows, string name);
+  void create_table(string header_rows, string name);
+  void update_table(string rows, string name);
 };

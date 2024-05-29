@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include <iostream>
 
 int str_include_start(string str, string check)
 {
@@ -222,14 +223,100 @@ string joins(vector<string> arr, string separator)
 vector<string> split_into_vector(string str, char separator)
 {
   vector<string> arr;
-  int counter = 0;
+  string temp = "";
   for (int i = 0; str[i] != '\0'; i++)
   {
     if (str[i] == separator)
     {
-      counter++;
+      arr.push_back(temp);
+      temp = "";
     }
-    arr[counter] += str[i];
+    else
+    {
+      temp += str[i];
+    }
   }
+  arr.push_back(temp);
   return arr;
+}
+
+int generateRandomNumber(int min, int max)
+{
+  return min + (rand() % (max - min + 1));
+}
+
+// Function to generate a random ID of given length
+string generateRandomID(int length)
+{
+  // Characters to use for generating the random ID
+  const string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  string randomID;
+
+  // Seed the random number generator
+  srand(time(0));
+
+  // Generate the random ID
+  for (int i = 0; i < length; ++i)
+  {
+    int randomIndex = generateRandomNumber(0, characters.size() - 1);
+    randomID += characters[randomIndex];
+  }
+
+  return randomID;
+}
+
+void show_as_table(string **matrix, int rows, int cols)
+{
+  // Calculate the maximum length of strings in each column
+  int max_col_lengths[cols];
+  for (int i = 0; i < cols; i++)
+  {
+    max_col_lengths[i] = 0;
+    for (int j = 0; j < rows; j++)
+    {
+      int len = matrix[j][i].length();
+      if (len > max_col_lengths[i])
+      {
+        max_col_lengths[i] = len;
+      }
+    }
+  }
+
+  // Display the table
+  for (int i = 0; i < rows; i++)
+  {
+    for (int j = 0; j < cols; j++)
+    {
+      cout << "+-";
+      for (int k = 1; k <= max_col_lengths[j]; k++)
+      {
+        cout << "-";
+      }
+      cout << "-";
+    }
+    cout << "+" << endl;
+
+    for (int j = 0; j < cols; j++)
+    {
+      cout << "| " << matrix[i][j];
+      for (int k = 1; k <= max_col_lengths[j] - (matrix[i][j]).length(); k++)
+      {
+        cout << ' ';
+      }
+      cout << " ";
+    }
+    cout << "|" << endl;
+  }
+
+  // Bottom border of the table
+  for (int j = 0; j < cols; j++)
+  {
+    cout << "+-";
+    for (int k = 1; k <= max_col_lengths[j]; k++)
+    {
+      cout << '-';
+    }
+    cout << "-";
+  }
+  cout << "+" << endl;
 }

@@ -1,5 +1,15 @@
 #include "evaluate.hpp"
 
+int splitted_arr_length(string *str_arr)
+{
+  int length = 0;
+  for (int i = 0; str_arr[i][0] != '\0'; i++)
+  {
+    length++;
+  }
+  return length;
+}
+
 void Evaluate::evaluate(const string &expression)
 {
   string *tokens = split(expression, ' ');
@@ -11,10 +21,18 @@ void Evaluate::evaluate(const string &expression)
   {
     if (str_includes(to_lower(tokens[1]), "database"))
     {
+      if (splitted_arr_length(tokens) != 3)
+      {
+        throw invalid_argument("You haven't provided the table name");
+      }
       handle_create_database(tokens[2]);
     }
     else if (str_includes(to_lower(tokens[1]), "table"))
     {
+      if (splitted_arr_length(tokens) != 4)
+      {
+        throw invalid_argument("You haven't provided the name or columns");
+      }
       handle_create_table(tokens[2], tokens[3]);
     }
   }
@@ -35,6 +53,10 @@ void Evaluate::evaluate(const string &expression)
       tokens[1] += ".db";
     current_db = new DB(tokens[1]);
     cout << tokens[1] << ": is activated" << endl;
+  }
+  else
+  {
+    cout << "--INVALID ARGUMENT--" << endl;
   }
 }
 
@@ -75,5 +97,5 @@ void Evaluate::handle_create_database(const string &name)
 void Evaluate::handle_create_table(string name, string columns)
 {
   Table new_table(name, current_db);
-  new_table.create_table(split_into_vector(columns, ','));
+  new_table.create_table(columns);
 }

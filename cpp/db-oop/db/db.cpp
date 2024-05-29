@@ -1,9 +1,4 @@
-#include <fstream>
-#include <iostream>
-
 #include "db.hpp"
-#include "../constants.hpp"
-#include "../utils/utils.hpp"
 
 string DB::get_db_name() const { return db_name; }
 
@@ -15,24 +10,26 @@ string DB::get_database()
   string all_tables = "";
   string current_line;
 
-  while (getline(input, current_line) && current_line != database_terminator)
+  while (getline(input, current_line) && current_line != DATABASE_TERMINATOR)
   {
     all_tables += current_line;
     all_tables += '\n';
   }
 
+  all_tables += DATABASE_TERMINATOR;
+
   input.close();
 
   // if schema doesn't exist create the schema
   // and write it to the db
-  int does_schemas_exists = str_include_start(all_tables, database_terminator);
+  int does_schemas_exists = str_includes(all_tables, DATABASE_TERMINATOR);
 
-  if (does_schemas_exists == -1)
+  if (!does_schemas_exists)
   {
     // there is no db file, first populate the db file with
     // appropriate data and and return that data
     // first reset the value
-    all_tables = database_terminator;
+    all_tables = DATABASE_TERMINATOR;
 
     ofstream output(ALL_DATABASES_FOLDER + '/' + db_name);
     output << all_tables;
@@ -49,15 +46,17 @@ void DB::save_database(string new_database)
   output.close();
 }
 
-void DB::upsert_table(string rows, string name)
+void DB::create_table(string header_rows, string name)
 {
   string database = get_database();
+  cout << database << endl;
+  cout << name << endl;
   int table_starting_index = str_include_start(database, name);
 
   if (table_starting_index == -1)
   {
     // add this new table at the end
-    int start_of_database_terminator = str_include_start(database, database_terminator);
+    int start_of_database_terminator = str_include_start(database, DATABASE_TERMINATOR);
 
     string new_database = "";
     for (int i = 0; i < start_of_database_terminator; i++)
@@ -65,31 +64,39 @@ void DB::upsert_table(string rows, string name)
       // add everything from 0 index to start of removal content
       new_database += database[i];
     }
+    header_rows = name + '\n' + "id," + header_rows;
     // now add the new rows
-    for (int i = 0; rows[i] != '\0'; i++)
+    for (int i = 0; header_rows[i] != '\0'; i++)
     {
-      new_database += rows[i];
+      new_database += header_rows[i];
     }
     // after adding the rows, add the new line
     new_database += '\n';
     // after adding the rows also the table-terminator
-    new_database += terminator;
+    new_database += TERMINATOR;
+    new_database += '\n';
     // now add the database after the end
     for (int i = start_of_database_terminator; database[i] != '\0'; i++)
     {
       new_database += database[i];
     }
-
-    // database terminator
-    new_database += database_terminator;
+    // database terminator already exists
 
     return save_database(new_database);
   }
 
+  cout << "TABLE: " << name << " ALREADY EXISTS" << endl;
+}
+
+void DB::update_table(string rows, string name)
+{
+  string database = get_database();
+  int table_starting_index = str_include_start(database, name);
+
   // find the starting index (already found)
   int start = table_starting_index;
   // find the ending index of table terminator (where is terminator '---' ends)
-  int end = str_include_end(start, database, terminator);
+  int end = str_include_end(start, database, TERMINATOR);
 
   // for new database we wants to remove the database content from start to end
   // and add the new rows instead of this
@@ -106,15 +113,14 @@ void DB::upsert_table(string rows, string name)
   }
   new_database += '\n';
   // after adding the rows also the table-terminator
-  new_database += terminator;
+  new_database += TERMINATOR;
   // now add the database after the end
   for (int i = end + 1; database[i] != '\0'; i++)
   {
     new_database += database[i];
   }
 
-  // database terminator
-  new_database += database_terminator;
+  // database terminator is already present
 
   save_database(new_database);
 }
