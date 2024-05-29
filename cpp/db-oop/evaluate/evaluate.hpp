@@ -51,6 +51,8 @@ public:
 
   void handle_show_table(string name);
 
+  void handle_show_table_as_JSON(string name, string populate);
+
   ~Evaluate()
   {
     for (int i = 0; i < all_databases.size(); i++)

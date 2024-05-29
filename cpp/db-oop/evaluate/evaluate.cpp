@@ -83,7 +83,14 @@ void Evaluate::evaluate(const string &expression)
     {
       if (str_includes(to_lower(tokens[1]), "table"))
       {
-        if (splitted_arr_length(tokens) != 3)
+        if (splitted_arr_length(tokens) >= 5 && to_lower(tokens[4]) == "json")
+        {
+          string populate = "";
+          if (splitted_arr_length(tokens) == 7)
+            populate = tokens[6];
+          return handle_show_table_as_JSON(tokens[2], populate);
+        }
+        else if (splitted_arr_length(tokens) < 3)
         {
           throw invalid_argument("You haven't provided the name of table");
         }
@@ -161,4 +168,15 @@ void Evaluate::handle_show_table(string name)
 {
   Table new_table(name, current_db);
   new_table.show_table();
+}
+
+void Evaluate::handle_show_table_as_JSON(string name, string populate)
+{
+  Table new_table(name, current_db);
+  vector<string> empty;
+  if (populate == "")
+  {
+    return new_table.show_table_as_json(empty);
+  }
+  new_table.show_table_as_json(split_into_vector(populate, ','));
 }

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "../db/db.hpp"
 #include "../utils/utils.hpp"
@@ -21,4 +22,5 @@ public:
   void add_row(string row);
   void delete_row(string where);
   void show_table();
+  void show_table_as_json(vector<string> populate);
 };

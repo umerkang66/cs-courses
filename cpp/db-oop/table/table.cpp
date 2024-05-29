@@ -82,3 +82,42 @@ void Table::show_table()
   else
     cout << "It can't be shown as the table format, use JSON format" << endl;
 }
+
+// populate string should be like this
+// <field>=<from_table>
+// user=users
+void Table::show_table_as_json(vector<string> populate)
+{
+  vector<string> rows = split_into_vector(database_ptr->get_table(table_name), '\n');
+
+  vector<string> json_fields = split_into_vector(rows[1], ',');
+
+  vector<map<string, string>> json_arr;
+
+  for (int i = 2; i < rows.size() - 1; i++)
+  {
+    vector<string> current_row = split_into_vector(rows[i], ',');
+    map<string, string> mp;
+
+    for (int j = 0; j < current_row.size(); j++)
+    {
+      mp[json_fields[j]] = current_row[j];
+    }
+
+    json_arr.push_back(mp);
+  }
+
+  const string two_spaces = "  ";
+
+  cout << '[' << '\n';
+  for (int i = 0; i < json_arr.size(); i++)
+  {
+    cout << two_spaces << '{' << '\n';
+    for (int j = 0; j < json_fields.size(); j++)
+    {
+      cout << two_spaces << two_spaces << json_fields[j] << ": " << json_arr[i][json_fields[j]] << ",\n";
+    }
+    cout << two_spaces << '}' << ',' << '\n';
+  }
+  cout << ']' << endl;
+}
