@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "../db/db.hpp"
 #include "../utils/utils.hpp"
@@ -17,4 +18,7 @@ public:
   Table(string table_name, DB *database_ptr) : table_name(table_name), database_ptr(database_ptr) {}
 
   void create_table(string columns);
+  void add_row(string row);
+  void delete_row(string where);
+  void show_table();
 };

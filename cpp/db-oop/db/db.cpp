@@ -49,8 +49,6 @@ void DB::save_database(string new_database)
 void DB::create_table(string header_rows, string name)
 {
   string database = get_database();
-  cout << database << endl;
-  cout << name << endl;
   int table_starting_index = str_include_start(database, name);
 
   if (table_starting_index == -1)

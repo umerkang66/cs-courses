@@ -45,6 +45,12 @@ public:
 
   void handle_create_table(string name, string columns);
 
+  void handle_create_row(string table_name, string row);
+
+  void handle_delete_row(string table_name, string where);
+
+  void handle_show_table(string name);
+
   ~Evaluate()
   {
     for (int i = 0; i < all_databases.size(); i++)

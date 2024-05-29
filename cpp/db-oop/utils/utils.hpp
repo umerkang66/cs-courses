@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
 #include <vector>
+#include <iostream>
+
 using namespace std;
 
 int str_include_start(string str, string check);
@@ -25,3 +26,7 @@ vector<string> split_into_vector(string str, char separator);
 string generateRandomID(int length);
 
 void show_as_table(string **matrix, int rows, int cols);
+
+void show_as_table_vector(vector<vector<string>> matrix);
+
+string split_long_line(string longLine, int maxLength);

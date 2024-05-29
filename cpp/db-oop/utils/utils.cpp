@@ -1,5 +1,4 @@
 #include "utils.hpp"
-#include <iostream>
 
 int str_include_start(string str, string check)
 {
@@ -125,6 +124,15 @@ string *split(const string &str, char delimeter)
     }
     else
     {
+      if (str[i] == '"')
+      {
+        int j;
+        for (j = i + 1; str[j] != '"' && str[j] != '\0'; j++)
+        {
+          one_string += str[j];
+        }
+        i = j + 1;
+      }
       one_string += str[i];
     }
   }
@@ -224,7 +232,7 @@ vector<string> split_into_vector(string str, char separator)
 {
   vector<string> arr;
   string temp = "";
-  for (int i = 0; str[i] != '\0'; i++)
+  for (int i = 0; i < str.length(); i++)
   {
     if (str[i] == separator)
     {
@@ -249,7 +257,7 @@ int generateRandomNumber(int min, int max)
 string generateRandomID(int length)
 {
   // Characters to use for generating the random ID
-  const string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const string characters = "0123456789ABCDEFabcdef";
   string randomID;
 
   // Seed the random number generator
@@ -319,4 +327,110 @@ void show_as_table(string **matrix, int rows, int cols)
     cout << "-";
   }
   cout << "+" << endl;
+}
+
+void show_as_table_vector(vector<vector<string>> matrix)
+{
+  int rows = matrix.size();
+  int cols = matrix[0].size();
+
+  // Calculate the maximum length of strings in each column
+  int max_col_lengths[cols];
+  for (int i = 0; i < cols; i++)
+  {
+    max_col_lengths[i] = 0;
+    for (int j = 0; j < rows; j++)
+    {
+      int len = matrix[j][i].length();
+      if (len > max_col_lengths[i])
+      {
+        max_col_lengths[i] = len;
+      }
+    }
+  }
+
+  // Display the table
+  for (int i = 0; i < rows; i++)
+  {
+    for (int j = 0; j < cols; j++)
+    {
+      cout << "+-";
+      for (int k = 1; k <= max_col_lengths[j]; k++)
+      {
+        cout << "-";
+      }
+      cout << "-";
+    }
+    cout << "+" << endl;
+
+    for (int j = 0; j < cols; j++)
+    {
+      cout << "| " << matrix[i][j];
+      for (int k = 1; k <= max_col_lengths[j] - (matrix[i][j]).length(); k++)
+      {
+        cout << ' ';
+      }
+      cout << " ";
+    }
+    cout << "|" << endl;
+  }
+
+  // Bottom border of the table
+  for (int j = 0; j < cols; j++)
+  {
+    cout << "+-";
+    for (int k = 1; k <= max_col_lengths[j]; k++)
+    {
+      cout << '-';
+    }
+    cout << "-";
+  }
+  cout << "+" << endl;
+}
+
+string split_long_line(string longLine, int maxLength)
+{
+  string result;
+  int start = 0;
+
+  while (start < longLine.length())
+  {
+    // Find the end position of the current chunk
+    int end = start + maxLength;
+
+    // If the end position is within the bounds of the string
+    if (end < longLine.length())
+    {
+      // Move end back to the last space before the maxLength boundary
+      while (end > start && longLine[end] != ' ')
+      {
+        --end;
+      }
+      // If no space was found, keep the word whole and use the original maxLength boundary
+      if (end == start)
+      {
+        end = start + maxLength;
+      }
+    }
+    else
+    {
+      // If the end position is out of bounds, move it to the end of the string
+      end = longLine.length();
+    }
+
+    // Take a substring from start to end
+    string chunk = longLine.substr(start, end - start);
+    result += chunk;
+
+    // If this is not the last chunk, add a newline character
+    if (end < longLine.length())
+    {
+      result += '\n';
+    }
+
+    // Move the start position to the end position + 1 to skip the space
+    start = end + 1;
+  }
+
+  return result;
 }
