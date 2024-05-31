@@ -109,15 +109,21 @@ void Table::show_table_as_json(vector<string> populate)
 
   const string two_spaces = "  ";
 
-  cout << '[' << '\n';
-  for (int i = 0; i < json_arr.size(); i++)
+  if (populate.size() == 0)
   {
-    cout << two_spaces << '{' << '\n';
-    for (int j = 0; j < json_fields.size(); j++)
+    cout << '[' << '\n';
+    for (int i = 0; i < json_arr.size(); i++)
     {
-      cout << two_spaces << two_spaces << json_fields[j] << ": " << json_arr[i][json_fields[j]] << ",\n";
+      cout << two_spaces << '{' << '\n';
+      for (int j = 0; j < json_fields.size(); j++)
+      {
+        cout << two_spaces << two_spaces << json_fields[j] << ": " << json_arr[i][json_fields[j]] << ",\n";
+      }
+      cout << two_spaces << '}' << ',' << '\n';
     }
-    cout << two_spaces << '}' << ',' << '\n';
+    cout << ']' << endl;
+    return;
   }
-  cout << ']' << endl;
+
+  // also populate the table
 }
