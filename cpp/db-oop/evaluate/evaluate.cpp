@@ -28,7 +28,7 @@ void Evaluate::evaluate(const string &expression)
   }
   else
   {
-    if (!current_db)
+    if (!(to_lower(tokens[0]) == "show" && to_lower(tokens[1]) == "databases") && !(to_lower(tokens[0]) == "create" && to_lower(tokens[1]) == "database") && !current_db)
     {
       cout << "No DB is activated, type 'USE <database_name>' to Select the database" << endl;
       return;
