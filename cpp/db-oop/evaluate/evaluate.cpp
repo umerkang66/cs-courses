@@ -173,10 +173,10 @@ void Evaluate::handle_show_table(string name)
 void Evaluate::handle_show_table_as_JSON(string name, string populate)
 {
   Table new_table(name, current_db);
-  vector<string> empty;
   if (populate == "")
   {
+    vector<string> empty;
     return new_table.show_table_as_json(empty);
   }
-  new_table.show_table_as_json(split_into_vector(populate, ','));
+  new_table.show_table_as_json(split_into_vector(populate, '='));
 }

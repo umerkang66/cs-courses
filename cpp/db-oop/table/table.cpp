@@ -126,4 +126,12 @@ void Table::show_table_as_json(vector<string> populate)
   }
 
   // also populate the table
+  string new_field_in_parent = populate[0];
+  string child_table = split_into_vector(populate[1], '.')[0];
+  string child_table_field = split_into_vector(populate[1], '.')[1];
+  string parent_referenced_in_child = split_into_vector(populate[1], '.')[2];
+
+  for (int i = 0; i < json_arr.size(); i++)
+  {
+  }
 }

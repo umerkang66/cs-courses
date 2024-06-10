@@ -8,7 +8,7 @@
 
 ## Introduction
 
-Created Database Management System with any libraries. It can handle following operations.
+Created Database Management System without any libraries. It can handle following operations.
 
 - Creating Multiple Databases
 - Create Multiple Tables in single Database
@@ -40,26 +40,39 @@ Created Database Management System with any libraries. It can handle following o
 ## Creating and Showing empty Table
 
 `> CREATE TABLE users name,age,gender`
+
 `> SHOW TABLE users`
 
 ![create-and-show-table-users](images/image-5.png)
 
-## Delete row in the table
-
-`> DELETE ROW users WHERE id=<id>`
-`> SHOW TABLE users`
-
-![add-row-in-table](images/image-7.png)
-
 ## Adding row in the table
 
 `> CREATE ROW users umer,20,male`
+
 `> SHOW TABLE users`
 
 ![add-row-in-table](images/image-4.png)
+
+## Delete row in the table
+
+`> DELETE ROW users WHERE id=<id>`
+
+`> SHOW TABLE users`
+
+![add-row-in-table](images/image-7.png)
 
 ## Showing table as JSON
 
 `> SHOW TABLE users AS JSON`
 
 ![show-as-json](images/image-6.png)
+
+## Managing Relations
+
+- ### One to Many
+  - To create one to many relation.
+  - Reference the parent in every child.
+  - Like in every Blog Post add a `user_id` field that is the ID of user.
+  - While populating you have to tell which table has `parent_ids` and and what `field` it is.
+  - `SHOW TABLE users AS JSON POPULATE <field_in_parent>=<table_name>.<referencing_parent_in_child>.<parents_referenced_field_in_child>`
+  - `SHOW TABLE users AS JSON POPULATE blogs_posts=blogs.user_id.id`
