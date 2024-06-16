@@ -75,4 +75,4 @@ Created Database Management System without any libraries. It can handle followin
   - Like in every Blog Post add a `user_id` field that is the ID of user.
   - While populating you have to tell which table has `parent_ids` and and what `field` it is.
   - `SHOW TABLE users AS JSON POPULATE <field_in_parent>=<table_name>.<referencing_parent_in_child>.<parents_referenced_field_in_child>`
-  - `SHOW TABLE users AS JSON POPULATE blogs_posts=blogs.user_id.id`
+  - `SHOW TABLE users AS JSON POPULATE posts=posts.user.id`

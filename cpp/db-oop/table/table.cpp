@@ -89,9 +89,7 @@ void Table::show_table()
 void Table::show_table_as_json(vector<string> populate)
 {
   vector<string> rows = split_into_vector(database_ptr->get_table(table_name), '\n');
-
   vector<string> json_fields = split_into_vector(rows[1], ',');
-
   vector<map<string, string>> json_arr;
 
   for (int i = 2; i < rows.size() - 1; i++)
@@ -131,7 +129,50 @@ void Table::show_table_as_json(vector<string> populate)
   string child_table_field = split_into_vector(populate[1], '.')[1];
   string parent_referenced_in_child = split_into_vector(populate[1], '.')[2];
 
+  vector<string> nested_rows = split_into_vector(database_ptr->get_table(child_table), '\n');
+  vector<string> nested_json_fields = split_into_vector(nested_rows[1], ',');
+
+  int which_child_field = -1;
+  for (int i = 0; i < nested_json_fields.size(); i++)
+  {
+    if (child_table_field == nested_json_fields[i])
+      which_child_field = i;
+  }
+
+  cout << '[' << '\n';
   for (int i = 0; i < json_arr.size(); i++)
   {
+    // PRINTING
+    cout << two_spaces << '{' << '\n';
+    for (int j = 0; j < json_fields.size(); j++)
+    {
+      cout << two_spaces << two_spaces << json_fields[j] << ": " << json_arr[i][json_fields[j]] << ",\n";
+    }
+
+    cout << two_spaces << two_spaces << new_field_in_parent << ": [\n";
+
+    for (int j = 2; j < nested_rows.size() - 1; j++)
+    {
+      vector<string> current_row = split_into_vector(nested_rows[j], ',');
+
+      if (which_child_field != -1 && json_arr[i][parent_referenced_in_child] == current_row[which_child_field])
+      {
+        if (which_child_field != -1)
+        {
+          cout << two_spaces << two_spaces << "{\n";
+
+          for (int k = 0; k < nested_json_fields.size(); k++)
+          {
+            cout << two_spaces << two_spaces << two_spaces << nested_json_fields[k] << ": " << current_row[k] << ",\n";
+          }
+
+          cout << two_spaces << two_spaces << "},\n";
+        }
+      }
+    }
+
+    cout << two_spaces << two_spaces << "],\n";
+    cout << two_spaces << '}' << ',' << '\n';
   }
+  cout << ']' << endl;
 }
