@@ -82,13 +82,13 @@ Created Database Management System without any libraries. It can handle followin
 
   - `> SHOW TABLE users AS JSON POPULATE <field_in_parent>=<table_name>.<referencing_parent_in_child>.<parents_referenced_field_in_child>`
 
-### Child Referencing
+- ### Child Referencing
 
 `> SHOW TABLE users AS JSON POPULATE posts=posts.user.id`
 
 ![populating-posts](images/image-8.png)
 
-### Parent Referencing
+- ### Parent Referencing
 
 `> SHOW TABLE posts AS JSON POPULATE user_content=users.id.user`
 
