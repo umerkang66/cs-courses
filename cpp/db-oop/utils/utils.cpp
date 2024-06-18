@@ -94,7 +94,7 @@ int str_include_end(int starting_index, string str, string check)
   return end;
 }
 
-// This will split the string into an array by using the separator
+// // This will split the string into an array by using the separator
 string *split(const string &str, char delimeter)
 {
   int arr_length = 0;
@@ -131,15 +131,52 @@ string *split(const string &str, char delimeter)
         {
           one_string += str[j];
         }
-        i = j + 1;
+        i = j;
       }
-      one_string += str[i];
+      else
+      {
+        one_string += str[i];
+      }
     }
   }
   arr[arr_counter] = one_string;
-  arr[++arr_counter][0] = '\0';
+  arr[arr_counter + 1] = "";
 
   return arr;
+}
+
+vector<string> split_into_vector(string str, char separator)
+{
+  vector<string> arr;
+  string temp = "";
+  for (int i = 0; i < str.length(); i++)
+  {
+    if (str[i] == separator)
+    {
+      arr.push_back(temp);
+      temp = "";
+    }
+    else
+    {
+      temp += str[i];
+    }
+  }
+  arr.push_back(temp);
+  return arr;
+}
+
+string joins(vector<string> arr, string separator)
+{
+  string str = "";
+  for (int i = 0; i < arr.size(); i++)
+  {
+    str += arr[i];
+    if (i < arr.size() - 1)
+    {
+      str += separator;
+    }
+  }
+  return str;
 }
 
 void clear()
@@ -214,48 +251,14 @@ bool str_includes(const string &str, const string &substr)
   return false;
 }
 
-string joins(vector<string> arr, string separator)
-{
-  string str = "";
-  for (int i = 0; i < arr.size(); i++)
-  {
-    str += arr[i];
-    if (i < arr.size() - 1)
-    {
-      str += separator;
-    }
-  }
-  return str;
-}
-
-vector<string> split_into_vector(string str, char separator)
-{
-  vector<string> arr;
-  string temp = "";
-  for (int i = 0; i < str.length(); i++)
-  {
-    if (str[i] == separator)
-    {
-      arr.push_back(temp);
-      temp = "";
-    }
-    else
-    {
-      temp += str[i];
-    }
-  }
-  arr.push_back(temp);
-  return arr;
-}
-
-int generateRandomNumber(int min, int max)
-{
-  return min + (rand() % (max - min + 1));
-}
-
 // Function to generate a random ID of given length
 string generateRandomID(int length)
 {
+  auto generateRandomNumber = [](int min, int max) -> int
+  {
+    return min + (rand() % (max - min + 1));
+  };
+
   // Characters to use for generating the random ID
   const string characters = "0123456789ABCDEFabcdef";
   string randomID;
