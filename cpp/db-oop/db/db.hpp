@@ -26,4 +26,5 @@ public:
   string get_table(string name);
   void create_table(string header_rows, string name);
   void update_table(string rows, string name);
+  void show_all_tables();
 };

@@ -163,3 +163,25 @@ string DB::get_table(string name)
   }
   return table;
 }
+
+void DB::show_all_tables()
+{
+  vector<string> all_db_lines = split_into_vector(get_database(), '\n');
+  vector<string> tables;
+  tables.push_back(all_db_lines[0]);
+
+  for (int i = 1; i < all_db_lines.size() - 1; i++)
+  {
+    if (all_db_lines[i] == TERMINATOR && all_db_lines[i + 1] != DATABASE_TERMINATOR)
+    {
+      tables.push_back(all_db_lines[i + 1]);
+    }
+  }
+
+  for (int i = 0; i < tables.size(); i++)
+  {
+    cout << i + 1 << ": " << tables[i] << '\t';
+  }
+
+  cout << endl;
+}

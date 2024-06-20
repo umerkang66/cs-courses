@@ -81,6 +81,10 @@ void Evaluate::evaluate(const string &expression)
     }
     else if (to_lower(tokens[0]) == "show")
     {
+      if (str_includes(to_lower(tokens[1]), "all") && (str_includes(to_lower(tokens[2]), "table")))
+      {
+        handle_show_all_tables();
+      }
       if (str_includes(to_lower(tokens[1]), "table"))
       {
         if (splitted_arr_length(tokens) >= 5 && to_lower(tokens[4]) == "json")
@@ -162,6 +166,11 @@ void Evaluate::handle_delete_row(string table_name, string where)
 {
   Table new_table(table_name, current_db);
   new_table.delete_row(where);
+}
+
+void Evaluate::handle_show_all_tables()
+{
+  current_db->show_all_tables();
 }
 
 void Evaluate::handle_show_table(string name)
