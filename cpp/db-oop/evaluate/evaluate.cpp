@@ -87,6 +87,13 @@ void Evaluate::evaluate(const string &expression)
       }
       if (str_includes(to_lower(tokens[1]), "table"))
       {
+        if (splitted_arr_length(tokens) == 5 && to_lower(tokens[3]) == "where")
+        {
+          vector<string> where_id_value = split_into_vector(tokens[4], '=');
+          string key = where_id_value[0];
+          string value = where_id_value[1];
+          return handle_show_table_with_where(tokens[2], key, value);
+        }
         if (splitted_arr_length(tokens) >= 5 && to_lower(tokens[4]) == "json")
         {
           string populate = "";
@@ -177,6 +184,12 @@ void Evaluate::handle_show_table(string name)
 {
   Table new_table(name, current_db);
   new_table.show_table();
+}
+
+void Evaluate::handle_show_table_with_where(string name, string key, string value)
+{
+  Table new_table(name, current_db);
+  new_table.show_table(key, value);
 }
 
 void Evaluate::handle_show_table_as_JSON(string name, string populate)

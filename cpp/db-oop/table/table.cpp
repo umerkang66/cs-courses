@@ -54,14 +54,33 @@ void Table::delete_row(string where)
   database_ptr->update_table(joins(new_rows_vector, "\n"), table_name);
 }
 
-void Table::show_table()
+void Table::show_table(string key, string value)
 {
   vector<vector<string>> matrix;
   vector<string> rows = split_into_vector(database_ptr->get_table(table_name), '\n');
 
+  vector<string> first_row = split_into_vector(rows[1], ',');
+  int which_column = -1;
+  for (int i = 0; i < first_row.size(); i++)
+  {
+    if (first_row[i] == key)
+      which_column = i;
+  }
+
   for (int i = 1; i < rows.size() - 1; i++)
   {
-    matrix.push_back(split_into_vector(rows[i], ','));
+    if (i > 1 && key != "" && value != "" && which_column != -1)
+    {
+      vector<string> row = split_into_vector(rows[i], ',');
+      if (row[which_column] == value)
+      {
+        matrix.push_back(row);
+      }
+    }
+    else
+    {
+      matrix.push_back(split_into_vector(rows[i], ','));
+    }
   }
 
   bool is_table_show_able = true;

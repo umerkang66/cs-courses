@@ -21,6 +21,6 @@ public:
   void create_table(string columns);
   void add_row(string row);
   void delete_row(string where);
-  void show_table();
+  void show_table(string key = "", string value = "");
   void show_table_as_json(vector<string> populate);
 };

@@ -51,6 +51,8 @@ public:
 
   void handle_show_table(string name);
 
+  void handle_show_table_with_where(string name, string key, string value);
+
   void handle_show_all_tables();
 
   void handle_show_table_as_JSON(string name, string populate);
