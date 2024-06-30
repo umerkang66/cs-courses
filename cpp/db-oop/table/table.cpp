@@ -178,14 +178,14 @@ void Table::show_table_as_json(vector<string> populate)
       {
         if (which_child_field != -1)
         {
-          cout << two_spaces << two_spaces << "{\n";
+          cout << two_spaces << two_spaces << "  {\n";
 
           for (int k = 0; k < nested_json_fields.size(); k++)
           {
-            cout << two_spaces << two_spaces << two_spaces << nested_json_fields[k] << ": " << current_row[k] << ",\n";
+            cout << two_spaces << two_spaces << two_spaces << two_spaces << nested_json_fields[k] << ": " << current_row[k] << ",\n";
           }
 
-          cout << two_spaces << two_spaces << "},\n";
+          cout << two_spaces << two_spaces << "  },\n";
         }
       }
     }
