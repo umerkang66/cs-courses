@@ -82,13 +82,37 @@ private:
 
     return plr;
   }
-  Node *RR_rotation(Node *node)
+  Node *RR_rotation(Node *p)
   {
-    return node;
+    Node *pr = p->right;
+    Node *prl = pr->left;
+
+    pr->left = p;
+    p->right = prl;
+
+    // updating the heights
+    // only p and pl heights will change
+    p->height = node_height(p);
+    pr->height = node_height(pr);
+
+    return pr;
   }
-  Node *RL_rotation(Node *node)
+  Node *RL_rotation(Node *p)
   {
-    return node;
+    Node *pr = p->right;
+    Node *prl = pr->left;
+
+    pr->left = prl->right;
+    p->right = prl->left;
+
+    prl->left = p;
+    prl->right = pr;
+
+    p->height = node_height(p);
+    pr->height = node_height(pr);
+    prl->height = node_height(prl);
+
+    return prl;
   }
 
   Node *insert_helper(Node *node, int n)
@@ -101,32 +125,20 @@ private:
     }
 
     if (n < node->value)
-    {
       node->left = insert_helper(node->left, n);
-    }
     else
-    {
       node->right = insert_helper(node->right, n);
-    }
 
     node->height = node_height(node);
 
     if (balance_factor(node) == 2 && balance_factor(node->left) == 1)
-    {
       return LL_rotation(node);
-    }
     else if (balance_factor(node) == 2 && balance_factor(node->left) == -1)
-    {
       return LR_rotation(node);
-    }
-    else if (balance_factor(node) == -2 && balance_factor(node->left) == -1)
-    {
+    else if (balance_factor(node) == -2 && balance_factor(node->right) == -1)
       return RR_rotation(node);
-    }
-    else if (balance_factor(node) == -2 && balance_factor(node->left) == 1)
-    {
+    else if (balance_factor(node) == -2 && balance_factor(node->right) == 1)
       return RL_rotation(node);
-    }
 
     return node;
   }
@@ -178,6 +190,10 @@ int main()
   avl.reset();
   avl.insert(vector<int>{50, 10, 20});
   cout << avl.get_root()->value << endl; // root should be 20
+
+  avl.reset();
+  avl.insert(vector<int>{10, 20, 15, 14, 16});
+  cout << avl.get_root()->value << endl; // root should be 15
 
   return 0;
 }
