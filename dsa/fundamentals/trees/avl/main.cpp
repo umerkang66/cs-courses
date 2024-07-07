@@ -7,14 +7,16 @@ struct Node
 {
   Node *left = nullptr;
   Node *right = nullptr;
+  // when new node is inserted, by default its height becomes 0
+  int height = 1;
   int value;
   Node(int n) : value(n) {}
 };
 
 class AVL
 {
-public:
-  Node *head = nullptr;
+private:
+  Node *root = nullptr;
 
   void delete_nodes(Node *node)
   {
@@ -29,9 +31,109 @@ public:
     delete node;
   }
 
+  int node_height(Node *node)
+  {
+    int h_l = node && node->left ? node->left->height : 0;
+
+    int h_r = node && node->right ? node->right->height : 0;
+
+    // which one is greater add one to it
+    return h_l > h_r ? h_l + 1 : h_r + 1;
+  }
+
+  int balance_factor(Node *node)
+  {
+    int h_l = node && node->left ? node->left->height : 0;
+
+    int h_r = node && node->right ? node->right->height : 0;
+
+    return h_l - h_r;
+  }
+
+  Node *LL_rotation(Node *p)
+  {
+    Node *pl = p->left;
+    Node *plr = pl->right;
+
+    pl->right = p;
+    p->left = plr;
+
+    // updating the heights
+    // only p and pl heights will change
+    p->height = node_height(p);
+    pl->height = node_height(pl);
+
+    return pl;
+  }
+  Node *LR_rotation(Node *p)
+  {
+    Node *pl = p->left;
+    Node *plr = pl->right;
+
+    pl->right = plr->left;
+    p->left = plr->right;
+
+    plr->left = pl;
+    plr->right = p;
+
+    p->height = node_height(p);
+    pl->height = node_height(pl);
+    plr->height = node_height(plr);
+
+    return plr;
+  }
+  Node *RR_rotation(Node *node)
+  {
+    return node;
+  }
+  Node *RL_rotation(Node *node)
+  {
+    return node;
+  }
+
+  Node *insert_helper(Node *node, int n)
+  {
+    Node *new_node = new Node(n);
+    if (!node)
+    {
+      node = new_node;
+      return node;
+    }
+
+    if (n < node->value)
+    {
+      node->left = insert_helper(node->left, n);
+    }
+    else
+    {
+      node->right = insert_helper(node->right, n);
+    }
+
+    node->height = node_height(node);
+
+    if (balance_factor(node) == 2 && balance_factor(node->left) == 1)
+    {
+      return LL_rotation(node);
+    }
+    else if (balance_factor(node) == 2 && balance_factor(node->left) == -1)
+    {
+      return LR_rotation(node);
+    }
+    else if (balance_factor(node) == -2 && balance_factor(node->left) == -1)
+    {
+      return RR_rotation(node);
+    }
+    else if (balance_factor(node) == -2 && balance_factor(node->left) == 1)
+    {
+      return RL_rotation(node);
+    }
+
+    return node;
+  }
+
 public:
   AVL() {}
-  AVL(vector<int> &nums)
+  AVL(const vector<int> &nums)
   {
     for (int num : nums)
     {
@@ -41,50 +143,41 @@ public:
   AVL(int n)
   {
     Node *new_node = new Node(n);
-    head = new_node;
+    root = new_node;
   }
-  ~AVL() { delete_nodes(head); }
-
+  ~AVL() { delete_nodes(root); }
+  Node *get_root() const { return root; }
   AVL &insert(int n)
   {
-    Node *new_node = new Node(n);
-    if (!head)
-    {
-      head = new_node;
-      return *this;
-    }
-
-    Node *tail = nullptr;
-    Node *current = head;
-
-    while (current != nullptr)
-    {
-      tail = current;
-      if (n > current->value)
-      {
-        current = current->right;
-      }
-      else if (n < current->value)
-      {
-        current = current->left;
-      }
-    }
-
-    if (n < tail->value)
-    {
-      tail->left = new Node(n);
-      return *this;
-    }
-
-    tail->right = new Node(n);
+    root = insert_helper(root, n);
     return *this;
+  }
+  AVL &insert(const vector<int> &nums)
+  {
+    for (int num : nums)
+    {
+      // because of balancing, root might change
+      // so update the root every time
+      root = insert_helper(root, num);
+    }
+    return *this;
+  }
+  void reset()
+  {
+    delete_nodes(root);
+    root = nullptr;
   }
 };
 
 int main()
 {
-  AVL avl;
-  avl.insert(1).insert(2).insert(3);
+  AVL avl(vector<int>{10, 5, 2});
+  avl.insert(10).insert(5).insert(2);
+  cout << avl.get_root()->value << endl; // 5 should be new root
+
+  avl.reset();
+  avl.insert(vector<int>{50, 10, 20});
+  cout << avl.get_root()->value << endl; // root should be 20
 
   return 0;
 }
