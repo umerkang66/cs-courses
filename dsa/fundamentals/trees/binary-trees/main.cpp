@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include "queue.hpp"
 
 using namespace std;
@@ -16,23 +17,32 @@ class BinaryTree
 {
   Node *root;
 
-  void append_nodes(Node *node, Queue<int> *queue)
+  void append_nodes(Node *node, vector<int> arr, int level)
   {
-    if (queue->is_empty())
+    if (node == nullptr)
     {
       return;
     }
 
-    node->left = new Node(queue->dequeue());
-    node->right = new Node(queue->dequeue());
+    int left_level = (2 * level) + 1;
+    int right_level = (2 * level) + 2;
 
-    append_nodes(node->left, queue);
-    append_nodes(node->right, queue);
+    if (left_level < arr.size())
+    {
+      node->left = new Node(arr[left_level]);
+      append_nodes(node->left, arr, left_level);
+    }
+
+    if (right_level < arr.size())
+    {
+      node->right = new Node(arr[right_level]);
+      append_nodes(node->right, arr, right_level);
+    }
   }
 
   Node *build_tree(Node *node)
   {
-    cout << "Enter the data: " << endl;
+    cout << "Enter the item: " << endl;
     int data;
     cin >> data;
     node = new Node(data);
@@ -63,10 +73,10 @@ class BinaryTree
   }
 
 public:
-  BinaryTree(Queue<int> *queue)
+  BinaryTree(vector<int> arr)
   {
-    root = new Node(queue->dequeue());
-    append_nodes(root, queue);
+    root = new Node(arr[0]);
+    append_nodes(root, arr, 0);
   }
 
   BinaryTree()
@@ -79,7 +89,7 @@ public:
     return root;
   }
 
-  // bfs
+  // breath first search
   void level_order_traversal(Node *root)
   {
     Queue<Node *> queue;
@@ -126,8 +136,8 @@ public:
     {
       return;
     }
-    dfs_preorder(node->left);
-    dfs_preorder(node->right);
+    dfs_postorder(node->left);
+    dfs_postorder(node->right);
     cout << node->data << " ";
   }
 
@@ -137,9 +147,9 @@ public:
     {
       return;
     }
-    dfs_preorder(node->left);
+    dfs_inorder(node->left);
     cout << node->data << " ";
-    dfs_preorder(node->right);
+    dfs_inorder(node->right);
   }
 
   ~BinaryTree()
@@ -151,17 +161,42 @@ public:
 int main()
 {
   // 1 3 7 -1 -1 11 -1 -1 5 17 -1 -1 -1
+  // 1 3 7 11 5 17
   BinaryTree tree;
   tree.level_order_traversal(tree.get_root());
   cout << endl;
 
+  cout << "DFS Preorder: ";
   tree.dfs_preorder(tree.get_root());
   cout << endl;
 
+  cout << "DFS Postorder: ";
   tree.dfs_postorder(tree.get_root());
   cout << endl;
 
+  cout << "DFS Inorder: ";
   tree.dfs_inorder(tree.get_root());
+  cout << endl;
+
+  cout << endl
+       << endl;
+
+  vector<int> arr = {1, 3, 5, 7, 11, 17};
+
+  BinaryTree tree2(arr);
+  tree2.level_order_traversal(tree2.get_root());
+  cout << endl;
+
+  cout << "DFS Preorder: ";
+  tree2.dfs_preorder(tree2.get_root());
+  cout << endl;
+
+  cout << "DFS Postorder: ";
+  tree2.dfs_postorder(tree2.get_root());
+  cout << endl;
+
+  cout << "DFS Inorder: ";
+  tree2.dfs_inorder(tree2.get_root());
   cout << endl;
   return 0;
 }
