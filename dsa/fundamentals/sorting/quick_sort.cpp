@@ -19,7 +19,8 @@ int get_partition(int *nums, int start, int end)
   {
     while (i <= j && nums[i] < nums[pivot])
       i++;
-    while (i <= j && nums[j] > nums[pivot])
+    // for duplicate elements
+    while (i <= j && nums[j] >= nums[pivot])
       j--;
 
     if (i < j)
@@ -55,9 +56,10 @@ void display(int *nums, int n)
 int main()
 {
   int nums[] = {5, 8, 4, 3, 9, 1};
-  display(nums, 6);
-  sort(nums, 0, (sizeof(nums) / sizeof(nums[0])) - 1);
-  display(nums, 6);
+  int n = sizeof(nums) / sizeof(nums[0]);
+  display(nums, n);
+  sort(nums, 0, n - 1);
+  display(nums, n);
 
   return 0;
 }
