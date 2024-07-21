@@ -71,8 +71,9 @@ int main()
 
   cout << endl;
 
-  vector<int> visited(graph_matrix.size());
+  vector<int> visited(graph_matrix.size(), 0);
   dfs(graph_matrix, visited);
+  cout << endl;
 
   return 0;
 }
