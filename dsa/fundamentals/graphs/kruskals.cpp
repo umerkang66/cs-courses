@@ -128,13 +128,6 @@ void kruskals(const vector<vector<int>> &cost)
     }
   }
 
-  cout << "Set: ";
-  for (int i = 0; i < set.size(); i++)
-  {
-    cout << set[i] << ' ';
-  }
-  cout << endl;
-
   int total_cost = 0;
   for (int i = 0; i < ans[0].size(); i++)
   {
