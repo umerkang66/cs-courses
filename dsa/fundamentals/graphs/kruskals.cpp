@@ -108,6 +108,8 @@ void kruskals(const vector<vector<int>> &cost)
         ans_counter++;
 
         // update the set
+        // because the no. of elements are in the '-', so the comparision is opposite
+        // less than actually checks, which is greater
         if (set[first_p] < set[second_p])
         {
           set[first_p] += set[second_p];
