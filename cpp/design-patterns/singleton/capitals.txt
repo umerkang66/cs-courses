@@ -1,0 +1,20 @@
+Tokyo
+37400068
+Delhi
+28514000
+Shanghai
+25582000
+Sao Paulo
+21650000
+Mumbai
+20411000
+Beijing
+19618000
+Cairo
+19805000
+Dhaka
+19578000
+Mexico City
+21581000
+Osaka
+19281000
