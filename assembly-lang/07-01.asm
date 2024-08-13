@@ -35,5 +35,5 @@ start:
     jnz outerloop ; jump if not zero to 'outerloop'
 
 
-  mov ax, 0x4c00 ; exit code ..
-  int 0x21 ; .. is what the OS should do for me
+mov ax, 0x4c00 ; exit code ..
+int 0x21 ; .. is what the OS should do for me
