@@ -1,0 +1,9 @@
+sudo apt install nasm
+
+Assemble: nasm -f elf32 -l 09.lst -o 09.o 09.asm 
+
+Link with shared library that 'understands' the format: ld.so in Linux 
+ld -m elf_i386 -o 09.com 09.o
+
+Run it: 
+./09.com

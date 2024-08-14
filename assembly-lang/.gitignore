@@ -2,3 +2,5 @@
 *.com
 *.lst
 *.LST
+*.o
+*.O
