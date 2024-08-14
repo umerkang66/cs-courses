@@ -65,7 +65,8 @@ bubblesort:
   pop ax
   pop bp
 
-  ret 4 ; return 4 will empty the stack, the arguments that was added will be removed
+  ; by default with no args, ret only pop 2 bytes of ip
+  ret 4 ; this will pop 6 bytes total, 2 of ip and 4 bytes of argument words (2 words)
 
 
 start: 
