@@ -54,11 +54,12 @@ vector<int> dijkstras(const vector<vector<int>> &graph, int source = 1)
         {
           result[j] = result[current_source] + graph[current_source][j];
           // Push the adjacent node with its updated distance into the priority queue
-          visited[j] = true;
           index_queue.push({result[j], j});
         }
       }
     }
+
+    visited[current_source] = true;
   }
 
   return result;
