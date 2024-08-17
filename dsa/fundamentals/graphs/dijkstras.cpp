@@ -31,6 +31,9 @@ vector<int> dijkstras(const vector<vector<int>> &graph, int source = 1)
   vector<int> result(graph.size(), I);
 
   // Priority queue to store (distance, node) pairs
+  // first template is the form of data
+  // second template is the container of that form
+  // third is instead of creating max-heap create min-heap
   priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> index_queue;
 
   visited[source] = true;
