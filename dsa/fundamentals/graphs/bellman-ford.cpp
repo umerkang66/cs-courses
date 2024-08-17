@@ -47,11 +47,14 @@ vector<int> bellman_ford(const vector<vector<int>> &graph, int source = 1)
 
   vector<int> result(graph.size(), I);
   result[source] = 0;
+
   bool is_changed = true;
+  int i = 1;
 
   // for Worst Case, this should only run n-1 times, if there even relaxation after n-1 time, there is a negative weight cycle
-  while (is_changed)
+  while (is_changed && i < graph.size() - 1)
   {
+    // the second condition is for negative weighted cycles
     is_changed = false;
     for (const vector<int> &edge : edges)
     {
@@ -62,6 +65,7 @@ vector<int> bellman_ford(const vector<vector<int>> &graph, int source = 1)
         is_changed = true;
       }
     }
+    i++;
   }
 
   return result;
