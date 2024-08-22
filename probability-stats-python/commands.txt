@@ -1,0 +1,2 @@
+conda create --prefix ./stats-env
+conda activate ./stats-env
