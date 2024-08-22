@@ -1,2 +1,5 @@
 conda create --prefix ./stats-env
 conda activate ./stats-env
+
+# then install the libraries which are required through this command
+conda install <library_name>
