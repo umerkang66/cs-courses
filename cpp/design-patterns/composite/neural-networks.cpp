@@ -8,17 +8,7 @@ template <typename Self>
 struct SomeNeurons
 {
   template <typename T>
-  void connect_to(T &other)
-  {
-    for (Neuron &from : *static_cast<Self *>(this))
-    {
-      for (Neuron &to : other)
-      {
-        from.out.push_back(&to);
-        to.in.push_back(&from);
-      }
-    }
-  }
+  void connect_to(T &other);
 };
 
 struct Neuron : SomeNeurons<Neuron>
@@ -64,6 +54,20 @@ struct NeuronLayer : vector<Neuron>, SomeNeurons<NeuronLayer>
     return os;
   }
 };
+
+template <typename Self>
+template <typename T>
+void SomeNeurons<Self>::connect_to(T &other)
+{
+  for (Neuron &from : *static_cast<Self *>(this))
+  {
+    for (Neuron &to : other)
+    {
+      from.out.push_back(&to);
+      to.in.push_back(&from);
+    }
+  }
+}
 
 int main()
 {
