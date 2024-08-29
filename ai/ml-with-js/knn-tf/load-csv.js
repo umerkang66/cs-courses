@@ -18,7 +18,7 @@ module.exports = function loadCSV(
     labelColumns = [],
     converters = {},
     shuffle = false,
-    splitTest = false
+    splitTest = false,
   }
 ) {
   let data = fs.readFileSync(filename, { encoding: 'utf-8' });
@@ -61,7 +61,7 @@ module.exports = function loadCSV(
       features: data.slice(trainSize),
       labels: labels.slice(trainSize),
       testFeatures: data.slice(0, trainSize),
-      testLabels: labels.slice(0, trainSize)
+      testLabels: labels.slice(0, trainSize),
     };
   } else {
     return { features: data, labels };
