@@ -5,15 +5,18 @@ process.env['TF_CPP_MIN_LOG_LEVEL'] = '2';
 require('@tensorflow/tfjs-node');
 const plot = require('node-remote-plot');
 
-const loadCSV = require('./load-csv');
+const loadCSV = require('../load-csv');
 const LinearRegression = require('./linear-regression');
 
-let { features, labels, testFeatures, testLabels } = loadCSV('./cars.csv', {
-  shuffle: true,
-  splitTest: 50,
-  dataColumns: ['horsepower', 'weight', 'displacement'],
-  labelColumns: ['mpg'],
-});
+let { features, labels, testFeatures, testLabels } = loadCSV(
+  '../data/cars.csv',
+  {
+    shuffle: true,
+    splitTest: 50,
+    dataColumns: ['horsepower', 'weight', 'displacement'],
+    labelColumns: ['mpg'],
+  }
+);
 
 const regression = new LinearRegression(features, labels, {
   // this will be adjusted automatically
