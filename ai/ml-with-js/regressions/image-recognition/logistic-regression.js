@@ -104,13 +104,13 @@ class LogisticRegression {
     const cost = tf.tidy(() => {
       const guesses = this.features.matMul(this.weights).softmax();
 
-      const term1 = this.labels.transpose().matMul(guesses.log());
+      const term1 = this.labels.transpose().matMul(guesses.add(1e-7).log());
 
       const term2 = this.labels
         .mul(-1)
         .add(1)
         .transpose()
-        .matMul(guesses.mul(-1).add(1).log());
+        .matMul(guesses.mul(-1).add(1).add(1e-7).log());
 
       const cost = term1
         .add(term2)
