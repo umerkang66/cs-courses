@@ -4,7 +4,7 @@ class LogisticRegression {
   // we have two weights m and b
   mean = null;
   variance = null;
-  mseHistory = [];
+  costHistory = [];
 
   // features and labels should be tensors
   constructor(features, labels, options) {
@@ -18,6 +18,7 @@ class LogisticRegression {
         learningRate: 0.1,
         iterations: 1000,
         batchSize: this.features.shape[0],
+        decisionBoundary: 0.5,
       },
       options
     );
@@ -49,7 +50,7 @@ class LogisticRegression {
         this.gradientDescent(featureSlice, labelSlice);
       }
 
-      this.recordMSE();
+      this.recordCost();
       this.updateLearningRate();
     }
   }
@@ -58,7 +59,7 @@ class LogisticRegression {
     return this.processFeatures(observationsFeatures)
       .matMul(this.weights)
       .sigmoid()
-      .round();
+      .greater(this.options.decisionBoundary);
   }
 
   test(testFeatures, testLabels) {
@@ -93,25 +94,33 @@ class LogisticRegression {
     return features.sub(mean).div(this.variance.pow(0.5));
   }
 
-  recordMSE() {
-    const mse = this.features
-      .matMul(this.weights)
-      .sub(this.labels)
-      .pow(2)
-      .sum()
+  recordCost() {
+    const guesses = this.features.matMul(this.weights).sigmoid();
+
+    const term1 = this.labels.transpose().matMul(guesses.log());
+
+    const term2 = this.labels
+      .mul(-1)
+      .add(1)
+      .transpose()
+      .matMul(guesses.mul(-1).add(1).log());
+
+    const cost = term1
+      .add(term2)
       .div(this.features.shape[0])
+      .mul(-1)
       .dataSync()[0];
 
-    this.mseHistory.unshift(mse);
+    this.costHistory.unshift(cost);
   }
 
   updateLearningRate() {
-    if (this.mseHistory.length < 2) {
+    if (this.costHistory.length < 2) {
       return;
     }
 
-    const lastValue = this.mseHistory[0];
-    const secondLastValue = this.mseHistory[1];
+    const lastValue = this.costHistory[0];
+    const secondLastValue = this.costHistory[1];
 
     if (lastValue > secondLastValue) {
       // mse just increased, we are more incorrect, decrease the learning rate

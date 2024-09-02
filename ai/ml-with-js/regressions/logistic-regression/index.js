@@ -24,19 +24,13 @@ let { features, labels, testFeatures, testLabels } = loadCSV(
 const regression = new LogisticRegression(features, labels, {
   // this will be adjusted automatically
   learningRate: 0.5,
-  iterations: 100,
+  iterations: 20,
   batchSize: 50,
+  decisionBoundary: 0.5,
 });
 
 regression.train();
-const correct = regression.test(testFeatures, testLabels);
-console.log('Correct:', correct);
-
-// plot({
-//   x: regression.mseHistory.reverse(),
-//   xLabel: 'Iteration #',
-//   yLabel: 'Mean Squared Error',
-// });
+console.log('Correct:', regression.test(testFeatures, testLabels));
 
 regression
   .predict([
@@ -44,3 +38,9 @@ regression
     [88, 97, 1.065],
   ])
   .print();
+
+plot({
+  x: regression.costHistory.reverse(),
+  xLabel: 'Iteration #',
+  yLabel: 'Cost',
+});
