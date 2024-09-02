@@ -18,16 +18,23 @@ let { features, labels, testFeatures, testLabels } = loadCSV('./cars.csv', {
 const regression = new LinearRegression(features, labels, {
   // this will be adjusted automatically
   learningRate: 0.1,
-  iterations: 30,
+  iterations: 3,
+  batchSize: 10,
 });
 
 regression.train();
-const R2 = regression.test(testFeatures, testLabels);
+// const R2 = regression.test(testFeatures, testLabels);
+// console.log('R2:', R2);
 
-plot({
-  x: regression.mseHistory.reverse(),
-  xLabel: 'Iteration #',
-  yLabel: 'Mean Squared Error',
-});
+// plot({
+//   x: regression.mseHistory.reverse(),
+//   xLabel: 'Iteration #',
+//   yLabel: 'Mean Squared Error',
+// });
 
-console.log('R2:', R2);
+regression
+  .predict([
+    [120, 2, 380],
+    [135, 2.1, 420],
+  ])
+  .print();

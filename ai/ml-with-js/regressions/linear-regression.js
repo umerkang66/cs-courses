@@ -17,29 +17,45 @@ class LinearRegression {
       {
         learningRate: 0.1,
         iterations: 1000,
+        batchSize: this.features.shape[0],
       },
       options
     );
   }
 
-  gradientDescent() {
-    const currentGuesses = this.features.matMul(this.weights);
-    const differences = currentGuesses.sub(this.labels);
+  gradientDescent(features, labels) {
+    const currentGuesses = features.matMul(this.weights);
+    const differences = currentGuesses.sub(labels);
 
-    const slopes = this.features
+    const slopes = features
       .transpose()
       .matMul(differences)
-      .div(this.features.shape[0]);
+      .div(features.shape[0]);
 
     this.weights = this.weights.sub(slopes.mul(this.options.learningRate));
   }
 
   train() {
+    const batchQuantity = Math.floor(
+      this.features.shape[0] / this.options.batchSize
+    );
+
     for (let i = 0; i < this.options.iterations; i++) {
-      this.gradientDescent();
+      for (let j = 0; j < batchQuantity; j++) {
+        const bs = this.options.batchSize;
+        const featureSlice = this.features.slice([bs * j, 0], [bs, -1]);
+        const labelSlice = this.labels.slice([bs * j, 0], [bs, -1]);
+
+        this.gradientDescent(featureSlice, labelSlice);
+      }
+
       this.recordMSE();
       this.updateLearningRate();
     }
+  }
+
+  predict(observations) {
+    return this.processFeatures(observations).matMul(this.weights);
   }
 
   test(testFeatures, testLabels) {
