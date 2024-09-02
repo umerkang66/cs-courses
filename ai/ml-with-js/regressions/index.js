@@ -1,26 +1,33 @@
 // "@tensorflow/tfjs-node": "^0.1.17",
-// "lodash": "^4.17.11",
 // "memoize": "^0.1.1",
-// "mnist-data": "^1.2.6",
-// "node-remote-plot": "^1.2.0",
-// "shuffle-seed": "^1.1.6"
+
 process.env['TF_CPP_MIN_LOG_LEVEL'] = '2';
 require('@tensorflow/tfjs-node');
-const tf = require('@tensorflow/tfjs');
+const plot = require('node-remote-plot');
+
 const loadCSV = require('./load-csv');
 const LinearRegression = require('./linear-regression');
 
-let { features, labels } = loadCSV('./cars.csv', {
+let { features, labels, testFeatures, testLabels } = loadCSV('./cars.csv', {
   shuffle: true,
   splitTest: 50,
-  dataColumns: ['horsepower'],
+  dataColumns: ['horsepower', 'weight', 'displacement'],
   labelColumns: ['mpg'],
 });
 
 const regression = new LinearRegression(features, labels, {
-  learningRate: 0.000001,
-  iterations: 10000,
+  // this will be adjusted automatically
+  learningRate: 0.1,
+  iterations: 30,
 });
 
 regression.train();
-console.log('M:', regression.m, 'B:', regression.b);
+const R2 = regression.test(testFeatures, testLabels);
+
+plot({
+  x: regression.mseHistory.reverse(),
+  xLabel: 'Iteration #',
+  yLabel: 'Mean Squared Error',
+});
+
+console.log('R2:', R2);
