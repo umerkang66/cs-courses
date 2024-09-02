@@ -1,6 +1,3 @@
-// "@tensorflow/tfjs-node": "^0.1.17",
-// "memoize": "^0.1.1",
-
 process.env['TF_CPP_MIN_LOG_LEVEL'] = '2';
 require('@tensorflow/tfjs-node');
 const plot = require('node-remote-plot');
