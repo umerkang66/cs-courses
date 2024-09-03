@@ -3,30 +3,17 @@
 # export PIPENV_VENV_IN_PROJECT=1
 # uvicorn main:app --reload
 
-from typing import Optional
 from fastapi import FastAPI
-from pydantic import BaseModel
+from app import create_user_router
 
 
-app = FastAPI()
+def create_application() -> FastAPI:
+    user_router = create_user_router()
+
+    app = FastAPI()
+    app.include_router(user_router)
+
+    return app
 
 
-class User(BaseModel):
-    username: str
-    short_description: str
-    liked_posts: Optional[list[int]]
-
-
-def get_user_info() -> tuple[str, str]:
-    username = "test_user"
-    short_description = "my bio description"
-    return username, short_description
-
-
-@app.get("/user/me", response_model=User)
-def me():
-    username, short_description = get_user_info()
-    user = User(
-        username=username, short_description=short_description, liked_posts=[1, 2, 3]
-    )
-    return user
+app = create_application()
