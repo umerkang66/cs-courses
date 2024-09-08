@@ -1,3 +1,0 @@
-conda create --prefix ml-specialization-env
-conda activate ./ml-specialization-env
-pip install numpy matplotlib ipywidgets
