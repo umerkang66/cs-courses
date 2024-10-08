@@ -18,7 +18,7 @@ struct ListNode
             os << current_node->data;
             if (current_node->next != NULL)
             {
-                os << " --> ";
+                os << " <--> ";
             }
             current_node = current_node->next;
         }
