@@ -79,16 +79,15 @@ void nqueens(vector<vector<int>> board, int curr_row = 0)
   }
 }
 
+vector<vector<int>> generate_board(int n)
+{
+  vector<vector<int>> board(n, vector<int>(n, 0));
+  return board;
+}
+
 int main()
 {
-  vector<vector<int>> board = {
-      {0, 0, 0, 0},
-      {0, 0, 0, 0},
-      {0, 0, 0, 0},
-      {0, 0, 0, 0},
-  };
-
-  print_board(board);
+  vector<vector<int>> board = generate_board(4);
   nqueens(board);
 
   return 0;
