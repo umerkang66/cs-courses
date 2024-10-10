@@ -66,7 +66,10 @@ void sudoku_solver(vector<vector<int>> board, int row = 0, int col = 0)
     }
   }
   else
+  {
+    // don't do anything in this cell, just move to next cell
     sudoku_solver(board, row, col + 1);
+  }
 }
 
 int main(int argc, const char *argv[])
