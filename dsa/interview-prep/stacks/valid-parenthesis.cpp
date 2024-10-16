@@ -13,26 +13,26 @@ bool valid_parenthesis(string s)
     else
     {
       // insufficient opening brackets
-      if (s.empty())
+      if (checker.empty())
         return false;
 
       if (
-          s[i] == ']' && checker.top() == '[' ||
-          s[i] == '}' && checker.top() == '{' ||
-          s[i] == ')' && checker.top() == '(')
+          (checker.top() == '[' && s[i] == ']') ||
+          (checker.top() == '{' && s[i] == '}') ||
+          (checker.top() == '(' && s[i] == ')'))
         checker.pop();
       else
         return false;
     }
   }
 
-  return s.empty();
+  return checker.empty();
 }
 
 int main()
 {
-  string s1 = "[([{()}])]"; // 1
-  string s2 = "[";          // 0
+  string s1 = "[({([()])})]"; // 1
+  string s2 = "){";           // 0
 
   cout << valid_parenthesis(s1) << endl;
   cout << valid_parenthesis(s2) << endl;
