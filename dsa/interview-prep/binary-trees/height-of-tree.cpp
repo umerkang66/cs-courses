@@ -28,15 +28,15 @@ Node *build_tree(vector<int> &nodes)
   return node;
 }
 
-int height_of_tree(Node *node, int curr_sum = 0)
+int height_of_tree(Node *node)
 {
   if (node == NULL)
-    return curr_sum;
+    return 0;
 
-  int left_height = height_of_tree(node->left, curr_sum + 1);
-  int right_height = height_of_tree(node->right, curr_sum + 1);
+  int left_height = height_of_tree(node->left);
+  int right_height = height_of_tree(node->right);
 
-  return max(left_height, right_height);
+  return max(left_height, right_height) + 1;
 }
 
 int main()
