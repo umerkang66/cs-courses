@@ -103,6 +103,9 @@ int main()
     Stack<int> *s1 = new Stack<int>();
     Stack<int> *s2 = new Stack<int>();
     Stack<int> *s3 = new Stack<int>();
+    s1->push(1).push(2);
+    s2->push(3).push(4);
+    s3->push(5).push(6);
 
     Stack<Stack<int>> stack;
     stack.push(*s1);
