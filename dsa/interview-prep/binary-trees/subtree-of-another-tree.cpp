@@ -24,7 +24,7 @@ bool is_identical(Node *root1, Node *root2)
 bool is_subtree(Node *node, Node *sub_tree_node)
 {
   if (node == NULL && sub_tree_node == NULL)
-    return true;
+    return true; // here it can both be true and false
   else if (node == NULL || sub_tree_node == NULL)
     return false;
 
