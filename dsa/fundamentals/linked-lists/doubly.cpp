@@ -110,7 +110,7 @@ public:
 
         current_node->next = to_be_removed->next;
 
-        to_be_removed->prev = current_node;
+        to_be_removed->next->prev = current_node;
 
         delete to_be_removed;
         return data;
