@@ -20,6 +20,7 @@ class Heap
   vector<int> vect;
 
 public:
+  // push the element at the end, then move it to the correct position
   Heap &push(int n)
   {
     vect.push_back(n);
@@ -40,6 +41,37 @@ public:
     return *this;
   }
 
+  void pop()
+  {
+    // 1: swap root element with the last element
+    swap(vect[0], vect[vect.size() - 1]);
+    // 2: delete the last element
+    vect.pop_back();
+    // 3: Now update the position with respect to heap conditions from top to bottom
+    heapify(0);
+  }
+
+  void heapify(int parent)
+  {
+    int l = parent * 2 + 1;
+    int r = parent * 2 + 2;
+
+    int max_idx = parent;
+
+    if (l < vect.size() && vect[l] > vect[parent])
+      max_idx = l;
+    if (r < vect.size() && vect[r] > vect[parent])
+      max_idx = r;
+
+    swap(vect[max_idx], vect[parent]);
+
+    // only heapify again, if the previous change had happened
+    // now the updated element at the max_idx,
+    // provide to the heapify as the new parent
+    if (max_idx != parent)
+      heapify(max_idx);
+  }
+
   int top() { return vect[0]; }
   bool empty() { return vect.size() == 0; }
 
@@ -55,6 +87,12 @@ int main()
 {
   Heap heap;
   heap.push(50).push(10).push(100).push(40);
-  heap.show();
+  while (!heap.empty())
+  {
+    cout << heap.top() << ' ';
+    heap.pop();
+  }
+  cout << endl;
+
   return 0;
 }
