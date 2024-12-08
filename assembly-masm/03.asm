@@ -4,7 +4,7 @@ data_seg segment 'data'
   character db 'A'
   blank_character db ' '
   row db 12
-  col db 39
+  col db 38
 data_seg ends
 
 ; we are not using the stack
@@ -49,14 +49,14 @@ main proc far
     ; if not exited
 
     ; if upper arrow is pressed 
-    cmp al, 11h ; scan code for upper arrow
+    cmp al, 48h ; scan code for upper arrow
     je upper_arrow
-    cmp al, 1eh ; scan code for left arrow
-    je left_arrow
-    cmp al, 1fh ; scan code for down arrow
+    cmp al, 50h ; scan code for down arrow
     je down_arrow
-    cmp al, 20h ; scan code for right arrow
+    cmp al, 4Dh ; scan code for right arrow
     je right_arrow
+    cmp al, 4Bh ; scan code for left arrow
+    je left_arrow
 
     ; if arrow key is not pressed, keep checking for further key presses
     jmp animation_loop
