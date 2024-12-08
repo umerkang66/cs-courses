@@ -49,13 +49,13 @@ main proc far
     ; if not exited
 
     ; if upper arrow is pressed 
-    cmp al, 48h ; scan code for upper arrow
+    cmp ah, 11h ; scan code for upper arrow
     je upper_arrow
-    cmp al, 50h ; scan code for down arrow
+    cmp ah, 1Fh ; scan code for down arrow
     je down_arrow
-    cmp al, 4Dh ; scan code for right arrow
+    cmp ah, 20h ; scan code for right arrow
     je right_arrow
-    cmp al, 4Bh ; scan code for left arrow
+    cmp ah, 1Eh ; scan code for left arrow
     je left_arrow
 
     ; if arrow key is not pressed, keep checking for further key presses
@@ -67,18 +67,42 @@ main proc far
       ; if row is not equal to 0, mov up
 
       ; CLEAR THE PREVIOUS CHARACTER
-      call clear_character
+      ; change the cursor position
+      mov bh, 0   ; page no. 0
+      mov dh, row ; what current row is
+      mov dl, col ; what current col is
+      mov ah, 02  ; service routine code for changing cursor
+      int 10h     ; 10h/02 is the subroutine code of changing the cursor
+      ; printing the blank character
+      mov dl, blank_character
+      mov ah, 02
+      int 21h
 
       dec row
       jmp print_new_char
     
+; this will not run after upper arrow, 
+; reason is written at 
+near_animation_loop_jump: 
+  jmp animation_loop
+
+
     down_arrow: 
-      cmp row, 25 ; if row is already 25, don't move
+      cmp row, 24 ; if row is already 24, don't move
       je animation_loop
       ; if row is not equal to 25, mov up
 
       ; CLEAR THE PREVIOUS CHARACTER
-      call clear_character
+      ; change the cursor position
+      mov bh, 0   ; page no. 0
+      mov dh, row ; what current row is
+      mov dl, col ; what current col is
+      mov ah, 02  ; service routine code for changing cursor
+      int 10h     ; 10h/02 is the subroutine code of changing the cursor
+      ; printing the blank character
+      mov dl, blank_character
+      mov ah, 02
+      int 21h
 
       inc row
       jmp print_new_char
@@ -89,23 +113,41 @@ near_exit_instruction:
   jmp exit_program
 
     right_arrow: 
-      cmp col, 79  ; if col is already 79, don't move
+      cmp col, 78  ; if col is already 78, don't move
       je animation_loop
-      ; if col is not equal to 79, mov up
+      ; if col is not equal to 78, mov up
 
       ; CLEAR THE PREVIOUS CHARACTER
-      call clear_character
+      ; change the cursor position
+      mov bh, 0   ; page no. 0
+      mov dh, row ; what current row is
+      mov dl, col ; what current col is
+      mov ah, 02  ; service routine code for changing cursor
+      int 10h     ; 10h/02 is the subroutine code of changing the cursor
+      ; printing the blank character
+      mov dl, blank_character
+      mov ah, 02
+      int 21h
       
       inc col
       jmp print_new_char
 
     left_arrow: 
       cmp col, 0  ; if col is already 0, don't move
-      je animation_loop
+      je near_animation_loop_jump
       ; if col is not equal to 0, mov up
 
       ; CLEAR THE PREVIOUS CHARACTER
-      call clear_character
+      ; change the cursor position
+      mov bh, 0   ; page no. 0
+      mov dh, row ; what current row is
+      mov dl, col ; what current col is
+      mov ah, 02  ; service routine code for changing cursor
+      int 10h     ; 10h/02 is the subroutine code of changing the cursor
+      ; printing the blank character
+      mov dl, blank_character
+      mov ah, 02
+      int 21h     
 
       dec col
       jmp print_new_char
@@ -123,22 +165,8 @@ near_exit_instruction:
     mov ah, 02
     int 21h
     ; jump to animation loop for further key presses
-    jmp animation_loop
+    jmp near_animation_loop_jump
 
-
-  clear_character:
-    ; CLEAR THE PREVIOUS CHARACTER
-    ; change the cursor position
-    mov bh, 0   ; page no. 0
-    mov dh, row ; what current row is
-    mov dl, col ; what current col is
-    mov ah, 02  ; service routine code for changing cursor
-    int 10h     ; 10h/02 is the subroutine code of changing the cursor
-    ; printing the blank character
-    mov dl, blank_character
-    mov ah, 02
-    int 21h
-    ret  ; so we don't have to jump so create the function
 
 exit_program:
   ; exiting the program
