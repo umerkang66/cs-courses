@@ -58,7 +58,7 @@ public:
 
     int max_idx = parent;
 
-    if (l < vect.size() && vect[l] > vect[parent])
+    if (l < vect.size() && vect[l] > vect[max_idx])
       max_idx = l;
     // here we are comparing with max_idx, because left element might be bigger than right but smaller than parent, so we have to compare with max_idx
     // otherwise max_idx is just parent
