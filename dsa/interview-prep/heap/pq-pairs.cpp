@@ -2,6 +2,9 @@
 #include <queue>
 using namespace std;
 
+// here we provide, in heap if we have to swap or not
+// here we are telling if p1 value is bigger than p2, means swap, smaller elements should be at first
+// so this is making a min-heap
 struct CustomCompare
 {
   bool operator()(pair<string, int> &p1, pair<string, int> &p2)
