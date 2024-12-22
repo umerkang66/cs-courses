@@ -33,7 +33,7 @@ main proc far
   ; mov st1[bx + 3], 13
   ; mov st1[bx + 4], 10
 
-  ; CHANGING THE CURSOR
+  ; clearing the page
   mov ah, 06h
   mov al, 25   ; mov 25 lines
   mov bh, 07h

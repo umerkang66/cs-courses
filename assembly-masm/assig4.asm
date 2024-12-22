@@ -18,11 +18,7 @@ main proc far
   ; for storing the data segment address in the data segment register
   mov ax, data_seg
   mov ds, ax
-  ; setting the stack segment and stack pointer values
-  mov ax, stack_seg
-  mov ss, ax
-  mov sp, offset stack_seg
-  
+
   ; clearing the screen
   mov al, 25   ; mov 25 lines
   mov bh, 07h
@@ -44,16 +40,14 @@ main proc far
   int 21h
 
   ; WAITING LOGIC
-  mov cx, 18 ; 1sec: 18 ticks 
   mov ax, 40H ; this will be the segment where bios stores the time
   mov es, ax ; default segment is data segment, so we have to change it using extra segment
-  mov bx, 6Ch ; this is the offset where time ticks is stored
 
   character_loop:
     delay: 
-      mov ax, es:[bx] ; get the current tick
-      add ax, cx      ; how many times this should run, for 18 ticks, 1 second
-      cmp ax, es:[bx]
+      mov ax, es:[6Ch] ; get the current tick
+      add ax, 18      ; how many times this should run, for 18 ticks, 1 second
+      cmp ax, es:[6Ch]
       jge delay       ; till ax (added timer) is greater than current time,
                       ; keep moving the timer
       ; if this is passed, means the delay has happened
