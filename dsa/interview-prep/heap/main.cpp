@@ -60,16 +60,19 @@ public:
 
     if (l < vect.size() && vect[l] > vect[parent])
       max_idx = l;
-    if (r < vect.size() && vect[r] > vect[parent])
+    // here we are comparing with max_idx, because left element might be bigger than right but smaller than parent, so we have to compare with max_idx
+    // otherwise max_idx is just parent
+    if (r < vect.size() && vect[r] > vect[max_idx])
       max_idx = r;
 
-    swap(vect[max_idx], vect[parent]);
-
-    // only heapify again, if the previous change had happened
-    // now the updated element at the max_idx,
-    // provide to the heapify as the new parent
     if (max_idx != parent)
+    {
+      swap(vect[max_idx], vect[parent]);
+      // only heapify again, if the previous change had happened
+      // now the updated element at the max_idx,
+      // provide to the heapify as the new parent
       heapify(max_idx);
+    }
   }
 
   int top() { return vect[0]; }
