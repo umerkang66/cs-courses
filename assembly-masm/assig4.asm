@@ -44,32 +44,52 @@ main proc far
   mov es, ax ; default segment is data segment, so we have to change it using extra segment
 
   character_loop:
-    delay: 
-      mov ax, es:[6Ch] ; get the current tick
-      add ax, 18      ; how many times this should run, for 18 ticks, 1 second
-      cmp ax, es:[6Ch]
-      jge delay       ; till ax (added timer) is greater than current time,
-                      ; keep moving the timer
-      ; if this is passed, means the delay has happened
+    mov dx, es:[6Ch]  ; Get current ticks (low word)
+    mov cx, es:[6Eh]  ; Get current ticks (high word)
+  
+     ; Calculate the target time (current time + 18 ticks)
+    add dx, 9         ; Add half second delay to the low word
+    adc cx, 0         ; Add carry to the high word
+  
+    delay:
+      mov ax, es:[6Ch]  ; Read current ticks (low word)
+      mov bx, es:[6Eh]  ; Read current ticks (high word)
+      cmp bx, cx        ; Compare high words
+      jl delay          ; Loop if not reached
+      je delay_next     ; if higher word is equal, check in the lower word, 'delay_next'
+      jmp delay_end
+  
+      delay_next:
+        cmp ax, dx        ; Compare low words if high words are equal
+        jl delay          ; Loop if not reached
       
-      inc row
-      inc col
+      delay_end:
+        ; down forward
+        inc row
+        inc col
+        jmp action
+      
+        up_forward:
+          dec row
+          inc col
+          jmp action
 
-      ; change the cursor position
-      mov bh, 0   ; page no. 0
-      mov dh, row ; incremented row
-      mov dl, col ; incremented col
-      mov ah, 02  ; service routine code for changing cursor
-      int 10h     ; 10h/02 is the subroutine code of changing the cursor
+        action: 
+          ; change the cursor position
+          mov bh, 0   ; page no. 0
+          mov dh, row ; incremented row
+          mov dl, col ; incremented col
+          mov ah, 02  ; service routine code for changing cursor
+          int 10h     ; 10h/02 is the subroutine code of changing the cursor
 
-      ; printing the character
-      mov dl, [character]
-      mov ah, 02
-      int 21h
+          ; printing the character
+          mov dl, [character]
+          mov ah, 02
+          int 21h
 
-      ; do it till the last row
-      cmp row, 24
-      jl character_loop
+        ; do it till the last row
+        cmp row, 24
+        jl character_loop
 
 
 exit_program:
