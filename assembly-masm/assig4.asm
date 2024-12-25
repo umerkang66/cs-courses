@@ -5,6 +5,8 @@ data_seg segment 'data'
   blank_character db ' '
   row db 12
   col db 38
+  is_row_end db 0
+  is_col_end db 0
 data_seg ends
 
 ; we are not using the stack
@@ -48,7 +50,7 @@ main proc far
     mov cx, es:[6Eh]  ; Get current ticks (high word)
   
      ; Calculate the target time (current time + 18 ticks)
-    add dx, 9         ; Add half second delay to the low word
+    add dx, 1         ; Add half second delay to the low word
     adc cx, 0         ; Add carry to the high word
   
     delay:
@@ -64,16 +66,27 @@ main proc far
         jl delay          ; Loop if not reached
       
       delay_end:
-        ; down forward
-        inc row
-        inc col
-        jmp action
-      
-        up_forward:
-          dec row
+        cmp is_col_end, 1
+        jne inc_col
+
+        dec col
+        jmp check_for_row
+
+        inc_col:
           inc col
+
+        check_for_row:
+        cmp is_row_end, 1 ; check the state if 1, decrement the row
+        jne inc_row
+        
+        dec row ; if is not ended, just decrement the row
+        jmp action
+
+        inc_row:
+          inc row
           jmp action
 
+      
         action: 
           ; change the cursor position
           mov bh, 0   ; page no. 0
@@ -89,7 +102,35 @@ main proc far
 
         ; do it till the last row
         cmp row, 24
-        jl character_loop
+        je update_row_1
+
+        cmp row, 0
+        je update_row_0
+
+        cmp col, 79
+        je update_col_1
+
+        cmp col, 0
+        je update_col_0
+
+        ; continue the loop in any case
+        jmp character_loop
+
+        update_col_1: 
+          mov is_col_end, 1
+          jmp character_loop
+
+        update_col_0: 
+          mov is_col_end, 0
+          jmp character_loop
+
+        update_row_0:
+          mov is_row_end, 0
+          jmp character_loop
+
+        update_row_1: 
+          mov is_row_end, 1
+          jmp character_loop
 
 
 exit_program:
