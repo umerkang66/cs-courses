@@ -46,6 +46,19 @@ main proc far
   mov es, ax ; default segment is data segment, so we have to change it using extra segment
 
   character_loop:
+    mov ah, 01h
+    int 16h    ; kbhit service
+    jz key_not_pressed
+
+    ; If a key is pressed, retrieve it
+    mov ah, 00h
+    int 16h    ; Get the key code in AX (AH = scan code, AL = ASCII value)
+    cmp al, 1Bh ; Compare AL (ASCII value) with 1Bh (ESC key) 
+    ; 01h is scan code of ESC key, this can be get by AH, 
+    ; 1Bh is ascii value of ESC Key, this is stored in AL
+    je exit_program_near
+    
+    key_not_pressed:
     mov dx, es:[6Ch]  ; Get current ticks (low word)
     mov cx, es:[6Eh]  ; Get current ticks (high word)
   
@@ -96,6 +109,8 @@ main proc far
           inc row
           jmp action
 
+exit_program_near:
+  jmp exit_program
       
         action: 
           ; change the cursor position
