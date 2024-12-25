@@ -50,7 +50,7 @@ main proc far
     mov cx, es:[6Eh]  ; Get current ticks (high word)
   
      ; Calculate the target time (current time + 18 ticks)
-    add dx, 1         ; Add half second delay to the low word
+    add dx, 2         ; Add half second delay to the low word
     adc cx, 0         ; Add carry to the high word
   
     delay:
@@ -66,6 +66,16 @@ main proc far
         jl delay          ; Loop if not reached
       
       delay_end:
+        mov bh, 0   ; page no. 0
+        mov dh, row ; total rows = 25, half = 25/2
+        mov dl, col ; total cols = 80, half = 80/2 = 40 - (string length / 2) 7 = 33
+        mov ah, 02  ; service routine code for changing cursor
+        int 10h     ; 10h/02 is the subroutine code of changing the cursor
+        ; printing the blank character
+        mov dl, [blank_character]
+        mov ah, 02
+        int 21h
+
         cmp is_col_end, 1
         jne inc_col
 
