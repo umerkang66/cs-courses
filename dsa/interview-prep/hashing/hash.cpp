@@ -8,6 +8,12 @@ struct Node
   int value;
   Node *next = NULL;
   Node(string key, int value) : key(key), value(value) {}
+
+  ~Node()
+  {
+    if (next)
+      delete next;
+  }
 };
 
 class HashTable
@@ -29,8 +35,10 @@ class HashTable
   void rehash()
   {
     cout << "Rehash done" << endl;
-    Node **new_table = new Node *[totalSize * 2];
-    for (int i = 0; i < totalSize * 2; i++)
+    int new_total_size = totalSize * 2;
+
+    Node **new_table = new Node *[new_total_size];
+    for (int i = 0; i < new_total_size; i++)
       new_table[i] = NULL;
 
     // get all the previous elements in a vector in the form of key,value pair
@@ -43,18 +51,19 @@ class HashTable
         while (temp != NULL)
         {
           prev_values.push_back(make_pair(temp->key, temp->value));
-          Node *curr = temp;
           temp = temp->next;
-
-          delete curr;
         }
+        delete table[i];
         table[i] = NULL;
       }
     }
 
     delete[] table;
+
     table = new_table;
-    totalSize *= 2;
+    totalSize = new_total_size;
+    currSize = 0;
+
     for (const pair<string, int> &pr : prev_values)
       insert(pr.first, pr.second);
   }
@@ -83,6 +92,8 @@ public:
       rehash();
   }
 
+  // BIG CATCH: In remove, we are not deleting the element int the memory, we are just changing the reference to the next element
+  // if you want to change it, first remove destructor in node class, then you can do this
   void remove(string key)
   {
     int idx = hashFunction(key);
@@ -109,16 +120,12 @@ public:
     // if prev is null, mean it was the first element
     if (!prev && temp)
     {
-      Node *next = temp->next;
-      delete temp;
-      table[idx] = next;
+      table[idx] = temp->next;
       currSize--;
       return;
     }
 
-    Node *next = temp->next;
-    delete temp;
-    prev->next = next;
+    prev->next = temp->next;
     currSize--;
   }
 
@@ -155,16 +162,29 @@ public:
     return ks;
   }
 
+  void print()
+  {
+    for (int i = 0; i < totalSize; i++)
+    {
+      cout << "idx" << i << " -> ";
+      Node *temp = table[i];
+      while (temp)
+      {
+        cout << "(" << temp->key << ',' << temp->value << ") -> ";
+        temp = temp->next;
+      }
+      cout << endl;
+    }
+  }
+
   ~HashTable()
   {
     for (int i = 0; i < totalSize; i++)
     {
-      Node *temp = table[i];
-      while (temp)
+      if (table[i])
       {
-        Node *next = temp->next;
-        delete temp;
-        temp = next;
+        delete table[i];
+        table[i] = NULL;
       }
     }
     delete[] table;
@@ -173,16 +193,20 @@ public:
 
 int main()
 {
-  HashTable table;
+  HashTable table(5);
   table.insert("english", 45);
   table.insert("maths", 25);
   table.insert("biology", 35);
   table.insert("physics", 50);
   table.insert("chemistry", 40);
 
-  for (const string &key : table.keys())
-    cout << table.search(key) << ' ';
-  cout << endl;
+  table.print();
+
+  vector<string> keys = table.keys();
+  for (const string &key : keys)
+    table.remove(key);
+
+  table.print();
 
   return 0;
 }
