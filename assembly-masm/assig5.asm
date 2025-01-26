@@ -100,6 +100,8 @@ main proc far
   je minus_operation
   cmp operation, '*'
   je multiply_operation
+  cmp operation, '/'
+  je divide_operation
   ; if none of the above
   jmp finish
 
@@ -122,6 +124,14 @@ main proc far
   multiply_operation:
     mov al, digit1hex  ; Load first number
     mul digit2hex      ; Multiply second number
+    push ax
+    call display_decimal
+    jmp finish
+  divide_operation:
+    mov ah, 00h
+    mov al, digit1hex  ; Load first number
+    div digit2hex      ; Divide second number, al has quotient, ah has remainder
+    mov ah, 00h
     push ax
     call display_decimal
     jmp finish
