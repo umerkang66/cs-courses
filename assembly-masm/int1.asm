@@ -30,9 +30,9 @@ myproc proc near
   push ds
   push dx
   push ax
-  mov dx, offset st1
   mov ax, cs
   mov ds, ax
+  mov dx, offset st1
   mov ah, 9
   int 21H
   pop ax
