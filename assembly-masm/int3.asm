@@ -20,6 +20,7 @@ codepart:
   mov word ptr es:[15H*4], offset newint15
   mov word ptr es:[15H*4+2], cs
 
+  ; TESTING
   mov ah, 01
   int 21h
   mov dl, al
