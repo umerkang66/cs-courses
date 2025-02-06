@@ -26,43 +26,22 @@ main proc far
 
   ; ACTUAL BUBBLE SORT LOGIC
   mov cx, 5
-  outer_loop: 
-    mov ax, counter
-    add ax, 2
-    mov inner_counter, ax
-    push cx
-    dec cx  ; inner loop should n-1 times
-
+  dec cx ; outer loop runs n-1 times
+  outer_loop:
+    mov bx, 0 ; reset index for each outer loop iteration
     inner_loop:
-      mov bx, counter
-      mov ax, num[bx]
-
-      mov bx, inner_counter
-      mov dx, num[bx]
-
+      mov ax, num[bx]   ; load current element
+      mov dx, num[bx+2] ; load next element
       cmp ax, dx
-      jle end_inner
-      ; swapping logic here
-      mov si, counter
-      mov ax, num[si] ; first value
-
-      mov di, inner_counter
-      mov dx, num[di] ; second value
-
-      mov num[si], dx
-      mov num[di], ax
-
-      end_inner:
-      add inner_counter, 2
-      dec cx
-      cmp cx, 0
-      jne inner_loop
-
-    add counter, 2
-    pop cx
-    dec cx
-    cmp cx, 0
-    jne outer_loop
+      jle no_swap       ; if ax <= dx, no swap needed
+      ; swap elements
+      mov num[bx], dx
+      mov num[bx+2], ax
+      no_swap:
+      add bx, 2         ; move to next pair of elements
+      cmp bx, 8         ; because we are checking bx+2, so stop before -2
+      jl inner_loop     
+    loop outer_loop
 
     ; printing the result
     mov ax, offset num
