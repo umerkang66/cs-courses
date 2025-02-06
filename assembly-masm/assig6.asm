@@ -1,7 +1,7 @@
 .model small
 
 data_seg segment 'data'
-  num dw 1, 5, 2, 4, 3
+  num dw 25, 11, 22, 30, 09
   counter dw 0
   inner_counter dw 2
   newline db 10, 13, '$'
