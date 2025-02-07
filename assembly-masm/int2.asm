@@ -15,6 +15,7 @@ codepart:
   mov ax, es:[8h*4+2]
   mov word ptr cs:oldvect[2], ax
 
+  ; this INT8 is called by operating system automatically every 1/18.2 second
   ; add the our proc offset and segment address to the original interrupt
   ; vectors
   mov ax, offset myproc
