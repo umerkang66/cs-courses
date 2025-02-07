@@ -42,7 +42,17 @@ newint15 proc near
   cmp ah, 04FH
   jne endint
 
-  cmp al, 1Dh ; scan code of ctrl
+  cmp al, 23H ; scan code of ctrl
+  jne endint
+
+  mov ax, 40H
+  mov es, ax
+  ; bit test
+  mov bl, 00001100b
+  ; from left 3rd is ctrl key state, 4th is alt key state
+  mov bh, byte ptr es:[17H]
+  and bh, bl
+  cmp bh, bl
   jne endint
   
   ; Toggle the is_toggle memory variable
