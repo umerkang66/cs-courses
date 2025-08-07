@@ -12,6 +12,11 @@ class GraphAdjacencyList
   map<T, vector<T> *> adjacency_lists;
 
 public:
+  map<T, vector<T> *> get_graph()
+  {
+    return adjacency_lists;
+  }
+
   void add_vertex(T vertex)
   {
     adjacency_lists[vertex] = new vector<T>();
