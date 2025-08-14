@@ -1,42 +1,64 @@
 const tf = require('@tensorflow/tfjs');
 
 class LogisticRegression {
-  // we have two weights m and b
+  // Mean and variance for feature standardization
   mean = null;
   variance = null;
+  // History of cost (loss) for each iteration
   costHistory = [];
 
-  // features and labels should be tensors
+  /**
+   * Create a new LogisticRegression model for binary classification.
+   * @param {Array|Tensor} features - The input features (X values).
+   * @param {Array|Tensor} labels - The target values (0 or 1).
+   * @param {Object} options - Training options (learningRate, iterations, batchSize, decisionBoundary).
+   */
   constructor(features, labels, options) {
+    // Standardize and add bias to features
     this.features = this.processFeatures(features);
+    // Convert labels to tensor
     this.labels = tf.tensor2d(labels);
+    // Initialize weights to zeros
     this.weights = tf.zeros([this.features.shape[1], 1]);
 
-    // assign default values
+    // Set default options if not provided
     this.options = Object.assign(
       {
         learningRate: 0.1,
         iterations: 1000,
         batchSize: this.features.shape[0],
-        decisionBoundary: 0.5,
+        decisionBoundary: 0.5, // Threshold for classification
       },
       options
     );
   }
 
+  /**
+   * Perform one step of gradient descent to update weights.
+   * @param {tf.Tensor} features - Batch of input features.
+   * @param {tf.Tensor} labels - Batch of target values.
+   */
   gradientDescent(features, labels) {
+    // Calculate predictions using the sigmoid function
     const currentGuesses = features.matMul(this.weights).sigmoid();
+    // Calculate the difference between predictions and actual labels
     const differences = currentGuesses.sub(labels);
 
+    // Calculate the gradient (slope) for each weight
     const slopes = features
       .transpose()
       .matMul(differences)
       .div(features.shape[0]);
 
+    // Update weights using the learning rate
     this.weights = this.weights.sub(slopes.mul(this.options.learningRate));
   }
 
+  /**
+   * Train the model using batch gradient descent.
+   */
   train() {
+    // Calculate how many batches per epoch
     const batchQuantity = Math.floor(
       this.features.shape[0] / this.options.batchSize
     );
@@ -44,17 +66,26 @@ class LogisticRegression {
     for (let i = 0; i < this.options.iterations; i++) {
       for (let j = 0; j < batchQuantity; j++) {
         const bs = this.options.batchSize;
+        // Get a batch of features and labels
         const featureSlice = this.features.slice([bs * j, 0], [bs, -1]);
         const labelSlice = this.labels.slice([bs * j, 0], [bs, -1]);
 
+        // Update weights using this batch
         this.gradientDescent(featureSlice, labelSlice);
       }
 
+      // Record the cost (loss) for this iteration
       this.recordCost();
+      // Optionally adjust the learning rate
       this.updateLearningRate();
     }
   }
 
+  /**
+   * Make predictions for new observations.
+   * @param {Array|Tensor} observationsFeatures - New input data.
+   * @returns {tf.Tensor} Predicted class (true/false for each sample).
+   */
   predict(observationsFeatures) {
     return this.processFeatures(observationsFeatures)
       .matMul(this.weights)
@@ -62,29 +93,49 @@ class LogisticRegression {
       .greater(this.options.decisionBoundary);
   }
 
+  /**
+   * Evaluate the model's accuracy on a test set.
+   * @param {Array|Tensor} testFeatures - Features for testing.
+   * @param {Array|Tensor} testLabels - True labels for testing.
+   * @returns {number} Accuracy (fraction of correct predictions).
+   */
   test(testFeatures, testLabels) {
     const predictions = this.predict(testFeatures);
     testLabels = tf.tensor2d(testLabels);
 
+    // Count the number of incorrect predictions
     const incorrect = predictions.sub(testLabels).abs().sum().dataSync()[0];
 
+    // Return accuracy (1 - fraction incorrect)
     return (predictions.shape[0] - incorrect) / predictions.shape[0];
   }
 
+  /**
+   * Standardize features and add a bias column (column of 1s).
+   * @param {Array|Tensor} features - Input features.
+   * @returns {tf.Tensor} Processed features.
+   */
   processFeatures(features) {
     features = tf.tensor2d(features);
 
+    // Standardize using mean and variance if already calculated
     if (this.mean && this.variance) {
       features = features.sub(this.mean).div(this.variance.pow(0.5));
     } else {
       features = this.standardize(features);
     }
 
+    // Add a bias column (intercept term)
     features = tf.ones([features.shape[0], 1]).concat(features, 1);
 
     return features;
   }
 
+  /**
+   * Calculate and store the mean and variance for standardization.
+   * @param {tf.Tensor} features - Input features.
+   * @returns {tf.Tensor} Standardized features.
+   */
   standardize(features) {
     const { mean, variance } = tf.moments(features, 0);
 
@@ -94,6 +145,9 @@ class LogisticRegression {
     return features.sub(mean).div(this.variance.pow(0.5));
   }
 
+  /**
+   * Record the cost (cross-entropy loss) for the current weights.
+   */
   recordCost() {
     const guesses = this.features.matMul(this.weights).sigmoid();
 
@@ -114,6 +168,10 @@ class LogisticRegression {
     this.costHistory.unshift(cost);
   }
 
+  /**
+   * Adjust the learning rate based on the trend of the cost.
+   * If cost increases, decrease the learning rate. If it decreases, increase it slightly.
+   */
   updateLearningRate() {
     if (this.costHistory.length < 2) {
       return;
@@ -123,10 +181,10 @@ class LogisticRegression {
     const secondLastValue = this.costHistory[1];
 
     if (lastValue > secondLastValue) {
-      // mse just increased, we are more incorrect, decrease the learning rate
+      // Cost increased, decrease learning rate
       this.options.learningRate /= 2;
     } else {
-      // increase by 5 percent
+      // Cost decreased, increase learning rate by 5%
       this.options.learningRate *= 1.05;
     }
   }

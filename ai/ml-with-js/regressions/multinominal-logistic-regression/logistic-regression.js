@@ -1,18 +1,27 @@
 const tf = require('@tensorflow/tfjs');
 
-class LogisticRegression {
-  // we have two weights m and b
+class MultinominalLogisticRegression {
+  // Mean and variance for feature standardization
   mean = null;
   variance = null;
+  // History of cost (loss) for each iteration
   costHistory = [];
 
-  // features and labels should be tensors
+  /**
+   * Create a new MultinominalLogisticRegression model for multi-class classification.
+   * @param {Array|Tensor} features - The input features (X values).
+   * @param {Array|Tensor} labels - The target values (one-hot encoded).
+   * @param {Object} options - Training options (learningRate, iterations, batchSize).
+   */
   constructor(features, labels, options) {
+    // Standardize and add bias to features
     this.features = this.processFeatures(features);
+    // Convert labels to tensor
     this.labels = tf.tensor2d(labels);
+    // Initialize weights to zeros (one column per class)
     this.weights = tf.zeros([this.features.shape[1], this.labels.shape[1]]);
 
-    // assign default values
+    // Set default options if not provided
     this.options = Object.assign(
       {
         learningRate: 0.1,
@@ -23,19 +32,32 @@ class LogisticRegression {
     );
   }
 
+  /**
+   * Perform one step of gradient descent to update weights.
+   * @param {tf.Tensor} features - Batch of input features.
+   * @param {tf.Tensor} labels - Batch of target values (one-hot encoded).
+   */
   gradientDescent(features, labels) {
+    // Calculate predictions using the softmax function (multi-class)
     const currentGuesses = features.matMul(this.weights).softmax();
+    // Calculate the difference between predictions and actual labels
     const differences = currentGuesses.sub(labels);
 
+    // Calculate the gradient (slope) for each weight
     const slopes = features
       .transpose()
       .matMul(differences)
       .div(features.shape[0]);
 
+    // Update weights using the learning rate
     this.weights = this.weights.sub(slopes.mul(this.options.learningRate));
   }
 
+  /**
+   * Train the model using batch gradient descent.
+   */
   train() {
+    // Calculate how many batches per epoch
     const batchQuantity = Math.floor(
       this.features.shape[0] / this.options.batchSize
     );
@@ -43,17 +65,26 @@ class LogisticRegression {
     for (let i = 0; i < this.options.iterations; i++) {
       for (let j = 0; j < batchQuantity; j++) {
         const bs = this.options.batchSize;
+        // Get a batch of features and labels
         const featureSlice = this.features.slice([bs * j, 0], [bs, -1]);
         const labelSlice = this.labels.slice([bs * j, 0], [bs, -1]);
 
+        // Update weights using this batch
         this.gradientDescent(featureSlice, labelSlice);
       }
 
+      // Record the cost (loss) for this iteration
       this.recordCost();
+      // Optionally adjust the learning rate
       this.updateLearningRate();
     }
   }
 
+  /**
+   * Make predictions for new observations (returns class index for each sample).
+   * @param {Array|Tensor} observationsFeatures - New input data.
+   * @returns {tf.Tensor} Predicted class index for each sample.
+   */
   predict(observationsFeatures) {
     return this.processFeatures(observationsFeatures)
       .matMul(this.weights)
@@ -61,29 +92,50 @@ class LogisticRegression {
       .argMax(1);
   }
 
+  /**
+   * Evaluate the model's accuracy on a test set.
+   * @param {Array|Tensor} testFeatures - Features for testing.
+   * @param {Array|Tensor} testLabels - True labels for testing (one-hot encoded).
+   * @returns {number} Accuracy (fraction of correct predictions).
+   */
   test(testFeatures, testLabels) {
     const predictions = this.predict(testFeatures);
+    // Convert one-hot encoded labels to class indices
     testLabels = tf.tensor2d(testLabels).argMax(1);
 
+    // Count the number of incorrect predictions
     const incorrect = predictions.notEqual(testLabels).sum().dataSync()[0];
 
+    // Return accuracy (1 - fraction incorrect)
     return (predictions.shape[0] - incorrect) / predictions.shape[0];
   }
 
+  /**
+   * Standardize features and add a bias column (column of 1s).
+   * @param {Array|Tensor} features - Input features.
+   * @returns {tf.Tensor} Processed features.
+   */
   processFeatures(features) {
     features = tf.tensor2d(features);
 
+    // Standardize using mean and variance if already calculated
     if (this.mean && this.variance) {
       features = features.sub(this.mean).div(this.variance.pow(0.5));
     } else {
       features = this.standardize(features);
     }
 
+    // Add a bias column (intercept term)
     features = tf.ones([features.shape[0], 1]).concat(features, 1);
 
     return features;
   }
 
+  /**
+   * Calculate and store the mean and variance for standardization.
+   * @param {tf.Tensor} features - Input features.
+   * @returns {tf.Tensor} Standardized features.
+   */
   standardize(features) {
     const { mean, variance } = tf.moments(features, 0);
 
@@ -93,6 +145,9 @@ class LogisticRegression {
     return features.sub(mean).div(this.variance.pow(0.5));
   }
 
+  /**
+   * Record the cost (cross-entropy loss) for the current weights.
+   */
   recordCost() {
     const guesses = this.features.matMul(this.weights).softmax();
 
@@ -113,6 +168,10 @@ class LogisticRegression {
     this.costHistory.unshift(cost);
   }
 
+  /**
+   * Adjust the learning rate based on the trend of the cost.
+   * If cost increases, decrease the learning rate. If it decreases, increase it slightly.
+   */
   updateLearningRate() {
     if (this.costHistory.length < 2) {
       return;
@@ -122,13 +181,13 @@ class LogisticRegression {
     const secondLastValue = this.costHistory[1];
 
     if (lastValue > secondLastValue) {
-      // mse just increased, we are more incorrect, decrease the learning rate
+      // Cost increased, decrease learning rate
       this.options.learningRate /= 2;
     } else {
-      // increase by 5 percent
+      // Cost decreased, increase learning rate by 5%
       this.options.learningRate *= 1.05;
     }
   }
 }
 
-module.exports = LogisticRegression;
+module.exports = MultinominalLogisticRegression;
