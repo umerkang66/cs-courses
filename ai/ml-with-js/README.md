@@ -58,22 +58,6 @@ A collection of regression models implemented in JavaScript:
      node index.js
      ```
    - For browser-based projects (like Plinko), open `index.html` in your browser.
-4. **Use Docker (Recommended)**
-   **KNN TF**
-   ```bash
-   docker build -t <img_name> .
-   docker run <img_name>
-   ```
-   **PLINKO**
-   ```bash
-   docker build -t <any_img_name> .
-   docker run -p 3000:3000 <any_img_name>
-   ```
-   **REGRESSIONS**
-   ```bash
-   docker build -t <any_img_name> .
-   docker run -p 3000:3000 <any_img_name>
-   ```
 
 ## Prerequisites
 

@@ -1,5 +1,4 @@
 // "@tensorflow/tfjs-node": "^0.1.17",
-testFeatures.forEach((testFeature, i) => {
 
 // Suppress TensorFlow backend logs for cleaner output
 process.env['TF_CPP_MIN_LOG_LEVEL'] = '2';
