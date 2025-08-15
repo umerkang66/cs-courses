@@ -58,13 +58,22 @@ let { features, labels, testFeatures, testLabels } = loadCSV(
 features = tf.tensor2d(features);
 labels = tf.tensor2d(labels);
 
-// Test the KNN algorithm on each test feature
+console.log('✨✨✨ KNN REGRESSION PREDICTION:');
+let totalPercentageError = 0;
+k = 3;
 testFeatures.forEach((testFeature, i) => {
-  // Predict the price using KNN
-  const result = knn(features, labels, tf.tensor1d(testFeature), 10);
-  // Calculate the error percentage
-  const err = (testLabels[i][0] - result) / testLabels[i][0];
+  const result = knn(features, labels, tf.tensor1d(testFeature), k);
+  const actual = testLabels[i][0];
+  const error = Math.abs((actual - result) / actual);
+  totalPercentageError += error;
 
-  // Print the error for each prediction
-  console.log(`Result: ${result}, `, `Error ${err * 100} %`);
+  console.log(
+    `Result: ${result}, Actual: ${actual}, Error: ${(error * 100).toFixed(2)}%`
+  );
 });
+
+const mape = (totalPercentageError / testFeatures.length) * 100;
+const accuracy = 100 - mape;
+
+console.log(`\n📊 Mean Absolute Percentage Error (MAPE): ${mape.toFixed(2)}%`);
+console.log(`✅ Accuracy: ${accuracy.toFixed(2)}%`);
