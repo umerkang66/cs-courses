@@ -2,7 +2,7 @@
 
 // Suppress TensorFlow backend logs for cleaner output
 process.env['TF_CPP_MIN_LOG_LEVEL'] = '2';
-require('@tensorflow/tfjs-node');
+// require('@tensorflow/tfjs-node');
 const tf = require('@tensorflow/tfjs');
 const loadCSV = require('./load-csv');
 
@@ -22,10 +22,9 @@ function knn(features, labels, predictionPoint, k) {
   // Standardize the prediction point using the mean and standard deviation
   const scaledPredictionPoint = predictionPoint
     .sub(mean)
-    .div(variance.pow(0.5));
-
+    .div(variance.add(1e-10).pow(0.5));
   // Standardize all features in the dataset
-  const scaledFeatures = features.sub(mean).div(variance.pow(0.5));
+  const scaledFeatures = features.sub(mean).div(variance.add(1e-10).pow(0.5));
 
   // Calculate the Euclidean distance between the prediction point and all other points
   // Then, sort by distance, take the k closest, and average their labels
@@ -50,7 +49,7 @@ let { features, labels, testFeatures, testLabels } = loadCSV(
   {
     shuffle: true, // Shuffle the data for randomness
     splitTest: 10, // Number of test samples
-    dataColumns: ['lat', 'long', 'sqft_lot, sqft_living'], // Feature columns
+    dataColumns: ['lat', 'long', 'sqft_lot', 'sqft_living'], // Feature columns
     labelColumns: ['price'], // Label column
   }
 );
@@ -67,5 +66,5 @@ testFeatures.forEach((testFeature, i) => {
   const err = (testLabels[i][0] - result) / testLabels[i][0];
 
   // Print the error for each prediction
-  console.log(`Error ${err * 100} %`);
+  console.log(`Result: ${result}, `, `Error ${err * 100} %`);
 });
