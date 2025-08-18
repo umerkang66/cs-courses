@@ -11,12 +11,16 @@ int main()
   graph.add_edge(3, 5);
   graph.add_edge(4, 5);
   graph.add_edge(5, 6);
+  graph.add_edge(9, 10);
+  graph.add_edge(10, 11);
 
   graph.visualize();
 
   // start from 0
+  cout << "BFS: " << endl;
   graph.bfs(0);
   cout << endl;
+  cout << "DFS: " << endl;
   graph.dfs(0);
 
   return 0;

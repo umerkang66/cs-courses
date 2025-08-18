@@ -46,11 +46,9 @@ public:
     }
   }
 
-  void bfs(T start)
+  void bfs_helper(T start, map<T, bool> &visited)
   {
     queue<T> q;
-    map<T, bool> visited;
-
     q.push(start);
 
     while (!q.empty())
@@ -72,6 +70,27 @@ public:
     }
   }
 
+  void bfs(T start)
+  {
+    map<T, bool> visited;
+    // Mark all nodes as not visited
+    for (const auto &pair : adjacency_lists)
+      visited[pair.first] = false;
+
+    // Start DFS from the given node
+    bfs_helper(start, visited);
+
+    // Check for disconnected nodes and run DFS for them
+    for (const auto &pair : adjacency_lists)
+    {
+      if (!visited[pair.first])
+      {
+        cout << "\nDisconnected component: ";
+        bfs_helper(pair.first, visited);
+      }
+    }
+  }
+
   void dfs_helper(T vertex, map<T, bool> &visited)
   {
     if ((*adjacency_lists[vertex]).empty())
@@ -89,8 +108,23 @@ public:
 
   void dfs(T start)
   {
-    map<T, bool> m;
-    dfs_helper(start, m);
+    map<T, bool> visited;
+    // Mark all nodes as not visited
+    for (const auto &pair : adjacency_lists)
+      visited[pair.first] = false;
+
+    // Start DFS from the given node
+    dfs_helper(start, visited);
+
+    // Check for disconnected nodes and run DFS for them
+    for (const auto &pair : adjacency_lists)
+    {
+      if (!visited[pair.first])
+      {
+        cout << "\nDisconnected component: ";
+        dfs_helper(pair.first, visited);
+      }
+    }
   }
 
   ~GraphAdjacencyList()
