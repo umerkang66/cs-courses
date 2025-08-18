@@ -37,7 +37,16 @@ bool detect_cycle_undirected(map<int, vector<int> *> &graph)
   map<int, bool> visited;
   int parent = -1;
 
-  return undir_cycle_helper(graph, graph.begin()->first, visited, parent);
+    for (const auto &element : graph)
+  {
+    if (!visited[element.first])
+    {
+      if (undir_cycle_helper(graph, graph.begin()->first, visited, parent))
+        return true;
+    }
+  }
+
+  return false;
 }
 
 int main()

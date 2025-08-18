@@ -42,7 +42,16 @@ bool detect_cycle_directed(map<int, vector<int>> &graph)
   map<int, bool> visited;
   map<int, bool> recursion_path;
 
-  return dir_cycle_helper(graph, graph.begin()->first, visited, recursion_path);
+  for (const auto &element : graph)
+  {
+    if (!visited[element.first])
+    {
+      if (dir_cycle_helper(graph, graph.begin()->first, visited, recursion_path))
+        return true;
+    }
+  }
+
+  return false;
 }
 
 int main()
