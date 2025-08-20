@@ -5,7 +5,7 @@
 
 using namespace std;
 
-// ================== UNDIRECTED GRAPH ==================
+// UNDIRECTED GRAPH
 template <typename T>
 class GraphAdjacencyList
 {
@@ -123,7 +123,7 @@ public:
   }
 };
 
-// ================== WEIGHTED UNDIRECTED GRAPH ==================
+// WEIGHTED UNDIRECTED GRAPH
 template <typename T>
 class WeightedGraphAdjacencyList
 {
@@ -164,7 +164,7 @@ public:
   }
 };
 
-// ================== DIRECTED GRAPH ==================
+// DIRECTED GRAPH
 template <typename T>
 class DirectedGraphAdjacencyList
 {
@@ -273,7 +273,7 @@ public:
   }
 };
 
-// ================== WEIGHTED DIRECTED GRAPH ==================
+// WEIGHTED DIRECTED GRAPH
 template <typename T>
 class WeightedDirectedGraphAdjacencyList
 {
