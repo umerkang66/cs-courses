@@ -280,6 +280,11 @@ class WeightedDirectedGraphAdjacencyList
   map<T, vector<pair<T, int>> *> list;
 
 public:
+  map<T, vector<pair<T, int>> *> &get_graph()
+  {
+    return list;
+  }
+
   void add_vertex(T vertex)
   {
     if (list.find(vertex) == list.end())
