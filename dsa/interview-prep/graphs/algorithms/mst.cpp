@@ -55,12 +55,19 @@ int prims_mst(map<int, vector<pair<int, int>> *> &graph)
   return total_cost;
 }
 
+struct Edge
+{
+  int u, v, wt;
+  Edge(int u, int v, int wt) : u(u), v(v), wt(wt) {}
+};
+
 int kruskals_mst(map<int, vector<pair<int, int>> *> &graph)
 {
   int total_cost = 0;
 
   // u v wt
-  vector<tuple<int, int, int>> edges;
+  vector<Edge>
+      edges;
   for (const auto &element : graph)
   {
     int u = element.first;
@@ -70,21 +77,21 @@ int kruskals_mst(map<int, vector<pair<int, int>> *> &graph)
       int v = neighbor.first;
       int wt = neighbor.second;
 
-      edges.push_back(make_tuple(u, v, wt));
+      edges.push_back(Edge(u, v, wt));
     }
   }
 
-  sort(edges.begin(), edges.end(), [](const auto &a, const auto &b)
-       { return get<2>(a) < get<2>(b); });
+  sort(edges.begin(), edges.end(), [](const Edge &a, const Edge &b)
+       { return a.wt < b.wt; });
 
   DSU dsu(graph.size());
 
   for (int i = 0; i < edges.size(); i++)
   {
     auto &edge = edges[i];
-    int u = get<0>(edge);
-    int v = get<1>(edge);
-    int wt = get<2>(edge);
+    int u = edge.u;
+    int v = edge.v;
+    int wt = edge.wt;
 
     int par_u = dsu.find(u);
     int par_v = dsu.find(v);
