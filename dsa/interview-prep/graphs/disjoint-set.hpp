@@ -31,7 +31,7 @@ public:
   // Unites the sets containing 'a' and 'b' using union by rank.
   // Attaches the tree with lower rank under the tree with higher rank.
   // If ranks are equal, makes one root and increments its rank.
-  int union_by_rank(int a, int b)
+  void union_by_rank(int a, int b)
   {
     int par_a = this->find(a);
     int par_b = this->find(b);
@@ -44,6 +44,7 @@ public:
     {
       parent[par_b] = par_a;
       rank[par_a]++;
+      // means cycle exist
     }
   }
 

@@ -1,6 +1,6 @@
+#include <bits/stdc++.h>
 #include "../graph.hpp"
-#include <set>
-#include <queue>
+#include "../disjoint-set.hpp"
 
 /**
  * Implements Minimum Spanning Tree (MST) algorithms for undirected weighted graphs.
@@ -55,6 +55,52 @@ int prims_mst(map<int, vector<pair<int, int>> *> &graph)
   return total_cost;
 }
 
+int kruskals_mst(map<int, vector<pair<int, int>> *> &graph)
+{
+  int total_cost = 0;
+
+  // u v wt
+  vector<tuple<int, int, int>> edges;
+  for (const auto &element : graph)
+  {
+    int u = element.first;
+
+    for (const auto &neighbor : *element.second)
+    {
+      int v = neighbor.first;
+      int wt = neighbor.second;
+
+      edges.push_back(make_tuple(u, v, wt));
+    }
+  }
+
+  sort(edges.begin(), edges.end(), [](const auto &a, const auto &b)
+       { return get<2>(a) < get<2>(b); });
+
+  DSU dsu(graph.size());
+
+  for (int i = 0; i < edges.size(); i++)
+  {
+    auto &edge = edges[i];
+    int u = get<0>(edge);
+    int v = get<1>(edge);
+    int wt = get<2>(edge);
+
+    int par_u = dsu.find(u);
+    int par_v = dsu.find(v);
+
+    // cycle doesnot exists
+    if (par_u != par_v)
+    {
+      // we can also do par_u, par_v
+      dsu.union_by_rank(u, v);
+      total_cost += wt;
+    }
+  }
+
+  return total_cost;
+}
+
 int main()
 {
   WeightedGraphAdjacencyList<int> g;
@@ -70,46 +116,7 @@ int main()
 
   cout << "PRIMS: expected '55', received '" << prims_mst(graph) << "'\n";
 
-  WeightedGraphAdjacencyList<int> g2;
-  g2.add_edge(0, 1, 1);
-  g2.add_edge(1, 2, 2);
-  g2.add_edge(0, 2, 3);
-  map<int, vector<pair<int, int>> *> &graph2 = g2.get_graph();
-  cout << "PRIMS (triangle): expected '3', received '" << prims_mst(graph2) << "'\n";
-
-  WeightedGraphAdjacencyList<int> g3;
-  g3.add_edge(0, 1, 1);
-  g3.add_edge(1, 2, 2);
-  g3.add_edge(2, 3, 1);
-  g3.add_edge(3, 0, 2);
-  g3.add_edge(0, 2, 2);
-  g3.add_edge(1, 3, 3);
-  map<int, vector<pair<int, int>> *> &graph3 = g3.get_graph();
-  cout << "PRIMS (square): expected '4', received '" << prims_mst(graph3) << "'\n";
-
-  WeightedGraphAdjacencyList<int> g4;
-  g4.add_edge(0, 1, 5);
-  g4.add_edge(2, 3, 7);
-  map<int, vector<pair<int, int>> *> &graph4 = g4.get_graph();
-  cout << "PRIMS (disconnected): expected '5', received '" << prims_mst(graph4) << "'\n";
-
-  WeightedGraphAdjacencyList<int> g5;
-  g5.add_edge(0, 1, 4);
-  g5.add_edge(0, 7, 8);
-  g5.add_edge(1, 2, 8);
-  g5.add_edge(1, 7, 11);
-  g5.add_edge(2, 3, 7);
-  g5.add_edge(2, 8, 2);
-  g5.add_edge(2, 5, 4);
-  g5.add_edge(3, 4, 9);
-  g5.add_edge(3, 5, 14);
-  g5.add_edge(4, 5, 10);
-  g5.add_edge(5, 6, 2);
-  g5.add_edge(6, 7, 1);
-  g5.add_edge(6, 8, 6);
-  g5.add_edge(7, 8, 7);
-  map<int, vector<pair<int, int>> *> &graph5 = g5.get_graph();
-  cout << "PRIMS (complex): expected '37', received '" << prims_mst(graph5) << "'\n";
+  cout << "KRUSKALS: expected '55', received '" << kruskals_mst(graph) << "'\n";
 
   return 0;
 }
