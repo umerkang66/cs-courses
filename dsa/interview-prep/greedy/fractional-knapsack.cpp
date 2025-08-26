@@ -36,8 +36,9 @@ double fractional_knapsack(const vector<int> &prices, const vector<int> &weights
     else
     {
       // we can only add the small amount
-      // price1kg * total_kg_remaining
+      // price per unit kg * total_kg_remaining
       total_value += data[i].second * total_weight;
+      // this will help break the loop, because we have used all the capacity
       total_weight = 0;
     }
   }
