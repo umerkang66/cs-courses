@@ -63,14 +63,66 @@ int max_profit_rod_cutting(vector<int> &prices, int rod_length)
   return dp[n][rod_length];
 }
 
+int max_profit_rod_cutting_with_lengths(vector<int> &prices, vector<int> &lengths, int rod_length)
+{
+  int n = prices.size(); // number of different pieces available
+  vector<vector<int>> dp(n + 1, vector<int>(rod_length + 1, 0));
+
+  // if there are 0 prices[], then first row is 0
+  // if rod length == 0, then first col is 0
+
+  // iterate through all available pieces
+  for (int i = 1; i <= n; i++)
+  {
+    // iterate through all possible rod lengths
+    for (int j = 1; j <= rod_length; j++)
+    {
+      // if current piece length is less than or equal to current rod length
+      if (lengths[i - 1] <= j)
+      {
+        // exclude: use the best profit without using current piece
+        int exclude = dp[i - 1][j];
+        // include: price of current piece + best profit for remaining length
+        int include = prices[i - 1] + dp[i][j - lengths[i - 1]];
+
+        dp[i][j] = max(include, exclude);
+      }
+      else
+      {
+        // if piece length is greater than rod length, we can't use it
+        dp[i][j] = dp[i - 1][j];
+      }
+    }
+  }
+
+  // Print the DP table for visualization (optional)
+  for (int i = 0; i <= n; i++)
+  {
+    for (int j = 0; j <= rod_length; j++)
+      cout << dp[i][j] << " ";
+    cout << endl;
+  }
+
+  return dp[n][rod_length];
+}
+
 int main()
 {
-  // Example: Price array where price[i] represents the price of rod piece of length (i+1)
-  vector<int> price = {1, 5, 8, 9, 10, 17, 17, 20};
-  // Total length of the rod we want to cut
-  int rod_length = 7;
-  // Calculate the maximum profit
-  int result = max_profit_rod_cutting(price, rod_length);
-  cout << "Maximum profit for rod of length " << rod_length << " is: " << result << endl;
+  // Test case 1: Original version with implicit lengths
+  vector<int> price1 = {1, 5, 8, 9, 10, 17, 17, 20};
+  int rod_length1 = 7;
+
+  // Test case 2: Version with explicit lengths
+  vector<int> price2 = {1, 5, 8, 9};
+  vector<int> lengths = {1, 2, 3, 4};
+  int rod_length2 = 5;
+  // Test the original version
+  int result1 = max_profit_rod_cutting(price1, rod_length1);
+  cout << "Maximum profit for rod of length " << rod_length1 << " (implicit lengths) is: " << result1 << endl;
+
+  // Test the version with explicit lengths
+  int result2 = max_profit_rod_cutting_with_lengths(price2, lengths, rod_length2);
+  cout << "Maximum profit for rod of length " << rod_length2 << " (explicit lengths) is: " << result2 << endl;
+
   return 0;
 }
