@@ -20,6 +20,9 @@ int max_profit_rod_cutting(vector<int> &prices, int rod_length)
   // dp[i][j] represents the maximum profit for rod length j using pieces of length 1 to i
   vector<vector<int>> dp(n + 1, vector<int>(rod_length + 1, 0));
 
+  // if there are 0 prices[], then first row is 0
+  // if rod length == 0, then first col is 0
+
   // iterate through all possible piece lengths
   for (int i = 1; i <= n; i++)
   {
@@ -65,7 +68,7 @@ int main()
   // Example: Price array where price[i] represents the price of rod piece of length (i+1)
   vector<int> price = {1, 5, 8, 9, 10, 17, 17, 20};
   // Total length of the rod we want to cut
-  int rod_length = 8;
+  int rod_length = 7;
   // Calculate the maximum profit
   int result = max_profit_rod_cutting(price, rod_length);
   cout << "Maximum profit for rod of length " << rod_length << " is: " << result << endl;
