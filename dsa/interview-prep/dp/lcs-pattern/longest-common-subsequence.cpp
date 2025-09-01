@@ -65,7 +65,8 @@ public:
   {
     // Initialize memoization table with -1 (unused for tabulation approach)
     vector<vector<int>> dp(text1.size(), vector<int>(text2.size(), -1));
-    return helper_rec(0, 0, text1, text2, dp); // Using tabulation approach
+    // return helper_rec(0, 0, text1, text2, dp);
+    return helper_tab(text1, text2); // Using tabulation approach
   }
 };
 
