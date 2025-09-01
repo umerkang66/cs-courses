@@ -4,11 +4,6 @@
 #include <vector>
 using namespace std;
 
-/**
- * Solution class containing methods to solve the Longest Common Subsequence problem
- * LCS is a sequence that appears in the same relative order in both strings,
- * but not necessarily contiguous
- */
 class Solution
 {
 public:
