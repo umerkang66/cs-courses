@@ -29,11 +29,11 @@ public:
     {
       for (int j = 1; j <= m; j++)
       {
-        // If characters match, add 1 to the LCS length from previous state
         if (text1[i - 1] == text2[j - 1])
+          // If characters match, add 1 to the LCS length from previous state
           dp[i][j] = 1 + dp[i - 1][j - 1];
-        // If characters don't match, take maximum of excluding either character
         else
+          // If characters don't match, take maximum of excluding either character
           dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
       }
     }
