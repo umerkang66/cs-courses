@@ -66,7 +66,7 @@ public:
     return dp[i][j];
   }
 
-   int longestCommonSubsequence(string text1, string text2)
+  int longestCommonSubsequence(string text1, string text2)
   {
     // Initialize memoization table with -1 (unused for tabulation approach)
     vector<vector<int>> dp(text1.size(), vector<int>(text2.size(), -1));
