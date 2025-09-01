@@ -56,30 +56,21 @@ public:
     if (dp[i][j] != -1)
       return dp[i][j];
 
-    // If characters match, include this character in LCS and move both pointers
     if (text1[i] == text2[j])
-    {
+      // If characters match, include this character in LCS and move both pointers
       dp[i][j] = helper_rec(i + 1, j + 1, text1, text2, dp) + 1;
-      return dp[i][j];
-    }
+    else
+      // If characters don't match, try excluding either character and take maximum
+      dp[i][j] = max(helper_rec(i + 1, j, text1, text2, dp), helper_rec(i, j + 1, text1, text2, dp));
 
-    // If characters don't match, try excluding either character and take maximum
-    dp[i][j] = max(helper_rec(i + 1, j, text1, text2, dp), helper_rec(i, j + 1, text1, text2, dp));
     return dp[i][j];
   }
 
-  /**
-   * Main function to find the length of Longest Common Subsequence
-   * Uses tabulation approach by default
-   * @param text1 First string
-   * @param text2 Second string
-   * @return Length of the longest common subsequence
-   */
-  int longestCommonSubsequence(string text1, string text2)
+   int longestCommonSubsequence(string text1, string text2)
   {
     // Initialize memoization table with -1 (unused for tabulation approach)
     vector<vector<int>> dp(text1.size(), vector<int>(text2.size(), -1));
-    return helper_tab(text1, text2); // Using tabulation approach
+    return helper_rec(0, 0, text1, text2, dp); // Using tabulation approach
   }
 };
 
