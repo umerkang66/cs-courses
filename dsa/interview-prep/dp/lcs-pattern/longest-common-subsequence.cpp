@@ -6,7 +6,6 @@ using namespace std;
 
 class Solution
 {
-public:
   /**
    * Bottom-up tabulation approach to find the length of LCS
    * Time Complexity: O(n*m), Space Complexity: O(n*m)
@@ -61,6 +60,7 @@ public:
     return dp[i][j];
   }
 
+public:
   int longestCommonSubsequence(string text1, string text2)
   {
     // Initialize memoization table with -1 (unused for tabulation approach)
