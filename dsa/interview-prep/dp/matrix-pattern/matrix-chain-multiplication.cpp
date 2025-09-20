@@ -1,4 +1,6 @@
 /*
+  NAUKRI: https://www.naukri.com/code360/problems/matrix-chain-multiplication_975344
+  YOUTUBE: https://www.youtube.com/watch?v=_WncuhSJZyA
  * Matrix Chain Multiplication (MCM) - Dynamic Programming
  * ===================================================
  * Problem:
@@ -151,8 +153,8 @@ int matrixMultiplication(const vector<int> &arr, int N)
   vector<vector<int>> dp(N, vector<int>(N, -1));
   // Start recursive computation from index 1 to N-1
   // Note: We start from 1 because arr[i-1] and arr[i] represent dimensions of matrix i
-  // return helper_rec(arr, 1, N - 1, dp);
   return helper_tab(arr);
+  // return helper_rec(arr, 1, N - 1, dp);
 }
 
 void runTest(const vector<int> &arr, int expected)
