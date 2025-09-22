@@ -84,11 +84,8 @@ class SegmentTree
     if (index <= node->end_interval && index >= node->start_interval)
     {
       if (index == node->start_interval && index == node->end_interval)
-      {
         // only one element is selected
-        node->data = value;
-        return node->data;
-      }
+        return node->data = value;
       else
       {
         // index is not pointing at the single element
@@ -101,10 +98,8 @@ class SegmentTree
       }
     }
     else
-    {
       // don't update it, just return it
       return node->data;
-    }
   }
 
 public:
@@ -117,15 +112,9 @@ public:
 
   Node *get_root() const { return root; }
 
-  int query(int query_start_i, int query_end_i)
-  {
-    return query(root, query_start_i, query_end_i);
-  }
+  int query(int query_start_i, int query_end_i) { return query(root, query_start_i, query_end_i); }
 
-  void update(int index, int value)
-  {
-    root->data = update(root, index, value);
-  }
+  void update(int index, int value) { root->data = update(root, index, value); }
 
   friend ostream &operator<<(ostream &cout, SegmentTree &t)
   {
