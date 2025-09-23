@@ -3,7 +3,7 @@
 using namespace std;
 
 // The SegmentTree class provides a data structure for range queries.
-class SegmentTree
+class MaxSegmentTree
 {
   // The segment tree is stored in a vector.
   vector<int> tree;
@@ -33,18 +33,18 @@ class SegmentTree
     build_tree(nums, mid + 1, end, right);
 
     // The value of the current node is the sum of its children.
-    tree[node] = tree[left] + tree[right];
+    tree[node] = max(tree[left], tree[right]);
   }
 
   // A recursive function to find the sum of a given range.
   // q1, q2: the query range
   // start, end: the current segment's range
   // node: the current node's index in the tree vector
-  int range_sum(int q1, int q2, int start, int end, int node)
+  int range_max(int q1, int q2, int start, int end, int node)
   {
     // Case 1: No overlap between the query range and the current segment.
     if (q2 < start || q1 > end)
-      return 0;
+      return INT_MIN;
 
     // Case 2: Complete overlap - the current segment is entirely within the query range.
     if (q1 <= start && q2 >= end)
@@ -54,15 +54,38 @@ class SegmentTree
     int mid = start + (end - start) / 2;
 
     // Recursively search in the left and right children and return the sum.
-    return range_sum(q1, q2, start, mid, 2 * node + 1) +
-           range_sum(q1, q2, mid + 1, end, 2 * node + 2);
+    int left_max = range_max(q1, q2, start, mid, 2 * node + 1);
+    int right_max = range_max(q1, q2, mid + 1, end, 2 * node + 2);
+    return max(left_max, right_max);
+  }
+
+  void update_tree(int index, int new_value, int start, int end, int node)
+  {
+    if (end - start == 0)
+    {
+      if (start == index)
+        tree[node] = new_value;
+      return;
+    }
+
+    int mid = start + (end - start) / 2;
+
+    int left = 2 * node + 1;
+    int right = 2 * node + 2;
+
+    if (index <= mid)
+      update_tree(index, new_value, start, mid, left);
+    else
+      update_tree(index, new_value, mid + 1, end, right);
+
+    tree[node] = max(tree[left], tree[right]);
   }
 
 public:
   // Constructor for the SegmentTree.
   // It initializes the tree with the given numbers.
   // The size of the tree vector is typically 4*n to be safe.
-  SegmentTree(vector<int> &nums)
+  MaxSegmentTree(vector<int> &nums)
   {
     n = nums.size();
     tree.resize(4 * n);
@@ -70,23 +93,29 @@ public:
   }
 
   // Public function to perform a range sum query.
-  int query(int q1, int q2)
-  {
-    return range_sum(q1, q2, 0, n - 1, 0);
-  }
+  int query(int q1, int q2) { return range_max(q1, q2, 0, n - 1, 0); }
+
+  void update(int index, int new_value) { update_tree(index, new_value, 0, n - 1, 0); }
 };
 
 int main()
 {
-  // Example usage of the SegmentTree.
-  vector<int> nums = {1, 2, 3, 4, 5, 6, 7, 8};
-  SegmentTree st(nums);
+  vector<int> nums = {1, 3, 5, 7, 9, 11, 6, 2};
+  MaxSegmentTree st(nums);
 
-  // Perform some queries and print the results.
-  cout << st.query(4, 6) << endl; // Expected output: 18 (5 + 6 + 7)
-  cout << st.query(0, 3) << endl; // Expected output: 10 (1 + 2 + 3 + 4)
-  cout << st.query(2, 5) << endl; // Expected output: 18 (3 + 4 + 5 + 6)
-  cout << st.query(0, 7) << endl; // Expected output: 36 (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8)
-  cout << st.query(6, 6) << endl; // Expected output: 7 (single element)
+  cout << st.query(0, 3) << " (expected 7)" << endl;
+  cout << st.query(4, 6) << " (expected 11)" << endl;
+  cout << st.query(2, 7) << " (expected 11)" << endl;
+  cout << st.query(0, 7) << " (expected 11)" << endl;
+
+  st.update(4, 10);
+  cout << st.query(4, 6) << " (expected 11)" << endl;
+
+  st.update(0, -1);
+  cout << st.query(0, 3) << " (expected 7)" << endl;
+
+  st.update(7, 0);
+  cout << st.query(6, 7) << " (expected 6)" << endl;
+
   return 0;
 }
