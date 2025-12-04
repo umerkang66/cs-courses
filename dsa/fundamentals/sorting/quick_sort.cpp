@@ -11,16 +11,16 @@ void swap(int *nums, int first, int second)
 // returns the index of pivot after moving to the right place
 int get_partition(int *nums, int start, int end)
 {
-  int i = start;
-  int j = end - 1;
-  int pivot = end;
+  int i = start + 1;
+  int j = end;
+  int pivot = start;
 
   while (i <= j)
   {
-    while (i <= j && nums[i] < nums[pivot])
+    while (i <= j && nums[i] <= nums[pivot])
       i++;
     // for duplicate elements
-    while (i <= j && nums[j] >= nums[pivot])
+    while (i <= j && nums[j] > nums[pivot])
       j--;
 
     if (i < j)
@@ -31,8 +31,8 @@ int get_partition(int *nums, int start, int end)
     }
   }
 
-  swap(nums, i, pivot);
-  return i;
+  swap(nums, j, pivot);
+  return j;
 }
 
 void sort(int *nums, int start, int end)
